@@ -49,6 +49,7 @@
     -->
     <properties>
         <java.version>21</java.version>
+        <start-class>com.telecomtrack.TelecomtrackApplication</start-class>
     </properties>
 
     <!--

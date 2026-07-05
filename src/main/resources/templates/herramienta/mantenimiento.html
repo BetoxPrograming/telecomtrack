@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+
+    <h1 th:text="#{herramienta.titulo.mantenimiento}"></h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <p class="mb-1"><strong th:text="#{campo.codigo}"></strong>: <span th:text="${herramienta.codigo}"></span></p>
+            <p class="mb-1"><strong th:text="#{campo.nombre}"></strong>: <span th:text="${herramienta.nombre}"></span></p>
+            <p class="mb-1"><strong th:text="#{campo.estado}"></strong>: <span th:text="${herramienta.estado}"></span></p>
+
+        </div>
+    </div>
+
+    <form th:action="@{/herramienta/mantenimiento}"
+          method="post"
+          th:object="${herramienta}">
+
+        <input type="hidden" th:field="*{idHerramienta}">
+        <input type="hidden" th:field="*{codigo}">
+        <input type="hidden" th:field="*{nombre}">
+        <input type="hidden" th:field="*{descripcion}">
+        <input type="hidden" th:field="*{estado}">
+        <input type="hidden" th:field="*{fechaBajaDefinitiva}">
+        <input type="hidden" th:field="*{justificacionBajaDefinitiva}">
+
+        <div class="mb-3">
+
+            <label for="fechaRetornoEstimada"
+                   class="form-label"
+                   th:text="#{campo.fecha.retorno.estimada}"></label>
+
+            <input type="date"
+                   id="fechaRetornoEstimada"
+                   class="form-control"
+                   th:field="*{fechaRetornoEstimada}"
+                   th:errorclass="is-invalid">
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('fechaRetornoEstimada')}"
+                 th:errors="*{fechaRetornoEstimada}"></div>
+
+        </div>
+
+        <button type="submit"
+                class="btn btn-warning"
+                th:text="#{herramienta.accion.mantenimiento}"></button>
+
+        <a th:href="@{/herramienta/listado}"
+           class="btn btn-secondary"
+           th:text="#{accion.regresar}"></a>
+
+    </form>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+</body>
+</html>
