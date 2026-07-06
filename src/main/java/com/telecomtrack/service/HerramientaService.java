@@ -59,6 +59,21 @@ public class HerramientaService {
     }
 
     @Transactional
+    public Herramienta guardar(Herramienta herramienta) {
+
+        if (!"Mantenimiento".equals(herramienta.getEstado())) {
+            herramienta.setFechaRetornoEstimada(null);
+        }
+
+        if (!"Baja".equals(herramienta.getEstado())) {
+            herramienta.setFechaBajaDefinitiva(null);
+            herramienta.setJustificacionBajaDefinitiva(null);
+        }
+
+        return herramientaRepository.save(herramienta);
+    }
+
+    @Transactional
     public void bajaDefinitiva(Integer idHerramienta, String justificacionBajaDefinitiva) {
         var herramienta = herramientaRepository.findById(idHerramienta)
                 .orElseThrow(() -> new IllegalArgumentException("La herramienta no existe"));

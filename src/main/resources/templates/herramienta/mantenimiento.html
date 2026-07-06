@@ -12,15 +12,7 @@
 
     <h1 th:text="#{herramienta.titulo.mantenimiento}"></h1>
 
-    <div class="card mb-4">
-        <div class="card-body">
-
-            <p class="mb-1"><strong th:text="#{campo.codigo}"></strong>: <span th:text="${herramienta.codigo}"></span></p>
-            <p class="mb-1"><strong th:text="#{campo.nombre}"></strong>: <span th:text="${herramienta.nombre}"></span></p>
-            <p class="mb-1"><strong th:text="#{campo.estado}"></strong>: <span th:text="${herramienta.estado}"></span></p>
-
-        </div>
-    </div>
+    <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
 
     <form th:action="@{/herramienta/mantenimiento}"
           method="post"

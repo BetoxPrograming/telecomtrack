@@ -12,77 +12,11 @@
 
     <h1 th:text="#{herramienta.titulo.detalle}"></h1>
 
-    <div class="card">
-        <div class="card-body">
+    <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
 
-            <div class="mb-3">
-                <strong><span th:text="#{campo.codigo}"></span>:</strong>
-                <span th:text="${herramienta.codigo}"></span>
-            </div>
-
-            <div class="mb-3">
-                <strong><span th:text="#{campo.nombre}"></span>:</strong>
-                <span th:text="${herramienta.nombre}"></span>
-            </div>
-
-            <div class="mb-3">
-                <strong><span th:text="#{campo.descripcion}"></span>:</strong>
-                <span th:text="${herramienta.descripcion}"></span>
-            </div>
-
-            <div class="mb-3">
-                <strong><span th:text="#{campo.estado}"></span>:</strong>
-                <span th:text="${herramienta.estado}"></span>
-            </div>
-
-            <div class="mb-3" th:if="${herramienta.fechaRetornoEstimada != null}">
-                <strong><span th:text="#{campo.fecha.retorno.estimada}"></span>:</strong>
-                <span th:text="${herramienta.fechaRetornoEstimada}"></span>
-            </div>
-
-            <div class="mb-3" th:if="${herramienta.fechaBajaDefinitiva != null}">
-                <strong><span th:text="#{campo.fecha.baja.definitiva}"></span>:</strong>
-                <span th:text="${herramienta.fechaBajaDefinitiva}"></span>
-                <br>
-                <small class="text-muted"
-                       th:text="${herramienta.justificacionBajaDefinitiva}"></small>
-            </div>
-
-            <a th:if="${herramienta.fechaBajaDefinitiva == null}"
-               th:href="@{/herramienta/baja-definitiva/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
-               class="btn btn-danger"
-               th:text="#{herramienta.accion.baja.definitiva}"></a>
-
-            <a th:if="${herramienta.estado == 'Disponible'}"
-               th:href="@{/herramienta/mantenimiento/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
-               class="btn btn-warning"
-               th:text="#{herramienta.accion.mantenimiento}"></a>
-
-            <form th:if="${herramienta.estado == 'Mantenimiento'}"
-                  th:action="@{/herramienta/disponible}"
-                  method="post"
-                  class="d-inline">
-
-                <input type="hidden"
-                       name="idHerramienta"
-                       th:value="${herramienta.idHerramienta}">
-
-                <button type="submit"
-                        class="btn btn-success"
-                        th:text="#{herramienta.accion.disponible}"></button>
-
-            </form>
-
-            <a th:href="@{/herramienta/modificar/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
-               class="btn btn-warning"
-               th:text="#{accion.modificar}"></a>
-
-            <a th:href="@{/herramienta/listado}"
-               class="btn btn-secondary"
-               th:text="#{accion.regresar}"></a>
-
-        </div>
-    </div>
+    <a th:href="@{/herramienta/catalogo}"
+       class="btn btn-secondary"
+       th:text="#{accion.regresar}"></a>
 
 </main>
 

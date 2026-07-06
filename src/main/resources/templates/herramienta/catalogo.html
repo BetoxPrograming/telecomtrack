@@ -14,11 +14,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h1 th:text="#{herramienta.titulo.listado}"></h1>
-
-        <a th:href="@{/herramienta/nuevo}"
-           class="btn btn-primary"
-           th:text="#{herramienta.accion.agregar}"></a>
+        <h1 th:text="#{herramienta.titulo.catalogo}"></h1>
 
     </div>
 
@@ -42,11 +38,8 @@
             <tr th:each="herramienta : ${herramientas}">
 
                 <td th:text="${herramienta.codigo}"></td>
-
                 <td th:text="${herramienta.nombre}"></td>
-
                 <td th:text="${herramienta.descripcion}"></td>
-
                 <td th:text="${herramienta.estado}"></td>
 
                 <td>
@@ -72,35 +65,6 @@
                     <a th:href="@{/herramienta/consultar/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
                        class="btn btn-info btn-sm"
                        th:text="#{accion.consultar}"></a>
-
-                    <a th:href="@{/herramienta/modificar/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
-                       class="btn btn-warning btn-sm"
-                       th:text="#{accion.modificar}"></a>
-
-                    <a th:if="${herramienta.fechaBajaDefinitiva == null}"
-                       th:href="@{/herramienta/baja-definitiva/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
-                       class="btn btn-danger btn-sm"
-                       th:text="#{herramienta.accion.baja.definitiva}"></a>
-
-                    <a th:if="${herramienta.estado == 'Disponible'}"
-                       th:href="@{/herramienta/mantenimiento/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
-                       class="btn btn-warning btn-sm"
-                       th:text="#{herramienta.accion.mantenimiento}"></a>
-
-                    <form th:if="${herramienta.estado == 'Mantenimiento'}"
-                          th:action="@{/herramienta/disponible}"
-                          method="post"
-                          class="d-inline">
-
-                        <input type="hidden"
-                               name="idHerramienta"
-                               th:value="${herramienta.idHerramienta}">
-
-                        <button type="submit"
-                                class="btn btn-success btn-sm"
-                                th:text="#{herramienta.accion.disponible}"></button>
-
-                    </form>
 
                 </td>
 

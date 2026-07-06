@@ -46,7 +46,6 @@ public class Herramienta implements Serializable {
     @Column(nullable = false, length = 20)
     private String estado;
 
-    @NotNull(message = "{validacion.herramienta.fechaRetornoEstimada.requerido}")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "fecha_retorno_estimada")
     private LocalDate fechaRetornoEstimada;

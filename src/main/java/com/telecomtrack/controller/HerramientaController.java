@@ -3,6 +3,7 @@ package com.telecomtrack.controller;
 import com.telecomtrack.domain.Herramienta;
 import com.telecomtrack.service.HerramientaService;
 import jakarta.validation.Valid;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,15 +12,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/herramienta")
 public class HerramientaController {
 
     private final HerramientaService herramientaService;
+    private final MessageSource messageSource;
 
-    public HerramientaController(HerramientaService herramientaService) {
+    public HerramientaController(HerramientaService herramientaService, MessageSource messageSource) {
         this.herramientaService = herramientaService;
+        this.messageSource = messageSource;
+    }
+
+    private void agregarMensajeExito(RedirectAttributes redirectAttributes, String mensajeCodigo, Locale locale) {
+        redirectAttributes.addFlashAttribute("mensaje", messageSource.getMessage(mensajeCodigo, null, locale));
+        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
     }
 
     @GetMapping("/listado")
@@ -30,6 +41,16 @@ public class HerramientaController {
         model.addAttribute("herramientas", herramientas);
 
         return "herramienta/listado";
+    }
+
+    @GetMapping("/catalogo")
+    public String catalogo(Model model) {
+
+        var herramientas = herramientaService.getHerramientas();
+
+        model.addAttribute("herramientas", herramientas);
+
+        return "herramienta/catalogo";
     }
 
     @GetMapping("/nuevo")
@@ -46,7 +67,9 @@ public class HerramientaController {
     @PostMapping("/guardar")
     public String guardar(
             @Valid Herramienta herramienta,
-            BindingResult bindingResult) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
 
         if (herramientaService.codigoDuplicado(herramienta)) {
             bindingResult.rejectValue("codigo", "validacion.herramienta.codigo.duplicado");
@@ -56,7 +79,9 @@ public class HerramientaController {
             return "herramienta/modifica";
         }
 
-        herramientaService.save(herramienta);
+        herramientaService.guardar(herramienta);
+
+        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.guardada", locale);
 
         return "redirect:/herramienta/listado";
     }
@@ -113,7 +138,9 @@ public class HerramientaController {
     public String bajaDefinitiva(
             @RequestParam Integer idHerramienta,
             @RequestParam(required = false) String justificacionBajaDefinitiva,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
 
         if (justificacionBajaDefinitiva == null || justificacionBajaDefinitiva.isBlank()) {
             var herramienta = herramientaService.getHerramienta(idHerramienta);
@@ -129,6 +156,8 @@ public class HerramientaController {
         }
 
         herramientaService.bajaDefinitiva(idHerramienta, justificacionBajaDefinitiva.trim());
+
+        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.baja", locale);
 
         return "redirect:/herramienta/listado";
     }
@@ -152,7 +181,13 @@ public class HerramientaController {
     @PostMapping("/mantenimiento")
     public String mantenimiento(
             @Valid Herramienta herramienta,
-            BindingResult bindingResult) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+
+        if (herramienta.getFechaRetornoEstimada() == null) {
+            bindingResult.rejectValue("fechaRetornoEstimada", "validacion.herramienta.fechaRetornoEstimada.requerido");
+        }
 
         if (bindingResult.hasErrors()) {
             return "herramienta/mantenimiento";
@@ -162,14 +197,20 @@ public class HerramientaController {
                 herramienta.getIdHerramienta(),
                 herramienta.getFechaRetornoEstimada());
 
+        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.mantenimiento", locale);
+
         return "redirect:/herramienta/listado";
     }
 
     @PostMapping("/disponible")
     public String volverDisponible(
-            @RequestParam Integer idHerramienta) {
+            @RequestParam Integer idHerramienta,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
 
         herramientaService.volverDisponible(idHerramienta);
+
+        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.disponible", locale);
 
         return "redirect:/herramienta/listado";
     }
