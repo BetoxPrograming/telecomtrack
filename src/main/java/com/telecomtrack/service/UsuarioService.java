@@ -11,6 +11,8 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
+    private static final String ROL_TECNICO = "Técnico";
+
     private final UsuarioRepository usuarioRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
@@ -27,7 +29,13 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public Optional getUsuario(Integer idUsuario) {
+    public List<Usuario> getTecnicosActivos() {
+        return usuarioRepository
+                .findByActivoTrueAndRolOrderByNombreAsc(ROL_TECNICO);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Usuario> getUsuario(Integer idUsuario) {
         return usuarioRepository.findById(idUsuario);
     }
 
