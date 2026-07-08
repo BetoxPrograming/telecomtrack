@@ -1,8 +1,10 @@
 package com.telecomtrack.controller;
 
 import com.telecomtrack.domain.AsignacionHerramienta;
+import com.telecomtrack.domain.Herramienta;
+import com.telecomtrack.domain.Proyecto;
+import com.telecomtrack.domain.Usuario;
 import com.telecomtrack.service.AsignacionHerramientaService;
-import com.telecomtrack.service.HerramientaService;
 import com.telecomtrack.service.ProyectoService;
 import com.telecomtrack.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -24,20 +26,17 @@ import java.util.Locale;
 public class AsignacionHerramientaController {
 
     private final AsignacionHerramientaService asignacionHerramientaService;
-    private final HerramientaService herramientaService;
     private final UsuarioService usuarioService;
     private final ProyectoService proyectoService;
     private final MessageSource messageSource;
 
     public AsignacionHerramientaController(
             AsignacionHerramientaService asignacionHerramientaService,
-            HerramientaService herramientaService,
             UsuarioService usuarioService,
             ProyectoService proyectoService,
             MessageSource messageSource) {
 
         this.asignacionHerramientaService = asignacionHerramientaService;
-        this.herramientaService = herramientaService;
         this.usuarioService = usuarioService;
         this.proyectoService = proyectoService;
         this.messageSource = messageSource;
@@ -60,6 +59,9 @@ public class AsignacionHerramientaController {
         AsignacionHerramienta asignacionHerramienta =
                 new AsignacionHerramienta();
 
+        asignacionHerramienta.setHerramienta(new Herramienta());
+        asignacionHerramienta.setTecnico(new Usuario());
+        asignacionHerramienta.setProyecto(new Proyecto());
         asignacionHerramienta.setFechaAsignacion(LocalDate.now());
         asignacionHerramienta.setActiva(true);
 
@@ -83,6 +85,11 @@ public class AsignacionHerramientaController {
             RedirectAttributes redirectAttributes,
             Locale locale) {
 
+        validarSelecciones(
+                asignacionHerramienta,
+                bindingResult
+        );
+
         if (bindingResult.hasErrors()) {
             cargarDatosFormulario(model);
             return "asignacion/modifica";
@@ -96,7 +103,6 @@ public class AsignacionHerramientaController {
             String mensaje = messageSource.getMessage(
                     "mensaje.asignacion.guardada",
                     null,
-                    "La asignación se registró correctamente.",
                     locale
             );
 
@@ -115,21 +121,45 @@ public class AsignacionHerramientaController {
         } catch (IllegalArgumentException
                  | IllegalStateException exception) {
 
-            String mensaje = messageSource.getMessage(
-                    exception.getMessage(),
-                    null,
-                    "No fue posible registrar la asignación.",
-                    locale
-            );
-
-            bindingResult.reject(
-                    "asignacion.error",
-                    mensaje
-            );
-
+            bindingResult.reject(exception.getMessage());
             cargarDatosFormulario(model);
 
             return "asignacion/modifica";
+        }
+    }
+
+    private void validarSelecciones(
+            AsignacionHerramienta asignacion,
+            BindingResult bindingResult) {
+
+        if (asignacion.getHerramienta() == null
+                || asignacion.getHerramienta()
+                .getIdHerramienta() == null) {
+
+            bindingResult.rejectValue(
+                    "herramienta",
+                    "validacion.asignacion.herramienta.requerida"
+            );
+        }
+
+        if (asignacion.getTecnico() == null
+                || asignacion.getTecnico()
+                .getIdUsuario() == null) {
+
+            bindingResult.rejectValue(
+                    "tecnico",
+                    "validacion.asignacion.tecnico.requerido"
+            );
+        }
+
+        if (asignacion.getProyecto() == null
+                || asignacion.getProyecto()
+                .getIdProyecto() == null) {
+
+            bindingResult.rejectValue(
+                    "proyecto",
+                    "validacion.asignacion.proyecto.requerido"
+            );
         }
     }
 
@@ -137,7 +167,8 @@ public class AsignacionHerramientaController {
 
         model.addAttribute(
                 "herramientas",
-                herramientaService.getHerramientasDisponibles()
+                asignacionHerramientaService
+                        .getHerramientasDisponibles()
         );
 
         model.addAttribute(

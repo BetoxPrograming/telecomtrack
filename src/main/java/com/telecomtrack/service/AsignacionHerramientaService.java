@@ -115,4 +115,16 @@ public class AsignacionHerramientaService {
 
         return asignacionRepository.save(asignacion);
     }
+
+    @Transactional(readOnly = true)
+    public List<Herramienta> getHerramientasDisponibles() {
+        return herramientaRepository.findAll()
+                .stream()
+                .filter(herramienta ->
+                        ESTADO_DISPONIBLE.equals(herramienta.getEstado()))
+                .sorted((primera, segunda) ->
+                        primera.getNombre()
+                                .compareToIgnoreCase(segunda.getNombre()))
+                .toList();
+    }
 }
