@@ -12,6 +12,10 @@ import java.util.Optional;
 @Service
 public class HerramientaService {
 
+    public static final String ESTADO_DISPONIBLE = "Disponible";
+    public static final String ESTADO_MANTENIMIENTO = "Mantenimiento";
+    public static final String ESTADO_BAJA = "Baja";
+
     private final HerramientaRepository herramientaRepository;
 
     public HerramientaService(HerramientaRepository herramientaRepository) {
@@ -44,69 +48,78 @@ public class HerramientaService {
     }
 
     @Transactional
-    public void save(Herramienta herramienta) {
-
-        if (!"Mantenimiento".equals(herramienta.getEstado())) {
-            herramienta.setFechaRetornoEstimada(null);
-        }
-
-        if (!"Baja".equals(herramienta.getEstado())) {
-            herramienta.setFechaBajaDefinitiva(null);
-            herramienta.setJustificacionBajaDefinitiva(null);
-        }
-
-        herramientaRepository.save(herramienta);
-    }
-
-    @Transactional
     public Herramienta guardar(Herramienta herramienta) {
-
-        if (!"Mantenimiento".equals(herramienta.getEstado())) {
-            herramienta.setFechaRetornoEstimada(null);
-        }
-
-        if (!"Baja".equals(herramienta.getEstado())) {
-            herramienta.setFechaBajaDefinitiva(null);
-            herramienta.setJustificacionBajaDefinitiva(null);
-        }
-
+        aplicarReglasEstado(herramienta);
         return herramientaRepository.save(herramienta);
     }
 
     @Transactional
-    public void bajaDefinitiva(Integer idHerramienta, String justificacionBajaDefinitiva) {
-        var herramienta = herramientaRepository.findById(idHerramienta)
-                .orElseThrow(() -> new IllegalArgumentException("La herramienta no existe"));
+    public boolean enviarAMantenimiento(Integer idHerramienta, LocalDate fechaRetornoEstimada) {
+        var herramienta = herramientaRepository.findById(idHerramienta).orElse(null);
 
-        herramienta.setEstado("Baja");
-        herramienta.setFechaRetornoEstimada(null);
-        herramienta.setFechaBajaDefinitiva(LocalDate.now());
-        herramienta.setJustificacionBajaDefinitiva(justificacionBajaDefinitiva);
+        if (herramienta == null || !ESTADO_DISPONIBLE.equals(herramienta.getEstado())) {
+            return false;
+        }
 
-        herramientaRepository.save(herramienta);
-    }
-
-    @Transactional
-    public void mantenimiento(Integer idHerramienta, LocalDate fechaRetornoEstimada) {
-        var herramienta = herramientaRepository.findById(idHerramienta)
-                .orElseThrow(() -> new IllegalArgumentException("La herramienta no existe"));
-
-        herramienta.setEstado("Mantenimiento");
-        herramienta.setFechaBajaDefinitiva(null);
-        herramienta.setJustificacionBajaDefinitiva(null);
+        herramienta.setEstado(ESTADO_MANTENIMIENTO);
         herramienta.setFechaRetornoEstimada(fechaRetornoEstimada);
+        herramienta.setFechaBaja(null);
+        herramienta.setJustificacionBaja(null);
 
         herramientaRepository.save(herramienta);
+        return true;
     }
 
     @Transactional
-    public void volverDisponible(Integer idHerramienta) {
-        var herramienta = herramientaRepository.findById(idHerramienta)
-                .orElseThrow(() -> new IllegalArgumentException("La herramienta no existe"));
+    public boolean darDeBaja(Integer idHerramienta, String justificacionBaja) {
+        var herramienta = herramientaRepository.findById(idHerramienta).orElse(null);
 
-        herramienta.setEstado("Disponible");
+        if (herramienta == null || ESTADO_BAJA.equals(herramienta.getEstado())) {
+            return false;
+        }
+
+        herramienta.setEstado(ESTADO_BAJA);
         herramienta.setFechaRetornoEstimada(null);
+        herramienta.setFechaBaja(LocalDate.now());
+        herramienta.setJustificacionBaja(justificacionBaja);
 
         herramientaRepository.save(herramienta);
+        return true;
+    }
+
+    @Transactional
+    public boolean volverDisponible(Integer idHerramienta) {
+        var herramienta = herramientaRepository.findById(idHerramienta).orElse(null);
+
+        if (herramienta == null || !ESTADO_MANTENIMIENTO.equals(herramienta.getEstado())) {
+            return false;
+        }
+
+        herramienta.setEstado(ESTADO_DISPONIBLE);
+        herramienta.setFechaRetornoEstimada(null);
+        herramienta.setFechaBaja(null);
+        herramienta.setJustificacionBaja(null);
+
+        herramientaRepository.save(herramienta);
+        return true;
+    }
+
+    private void aplicarReglasEstado(Herramienta herramienta) {
+        if (ESTADO_DISPONIBLE.equals(herramienta.getEstado())) {
+            herramienta.setFechaRetornoEstimada(null);
+            herramienta.setFechaBaja(null);
+            herramienta.setJustificacionBaja(null);
+            return;
+        }
+
+        if (ESTADO_MANTENIMIENTO.equals(herramienta.getEstado())) {
+            herramienta.setFechaBaja(null);
+            herramienta.setJustificacionBaja(null);
+            return;
+        }
+
+        if (ESTADO_BAJA.equals(herramienta.getEstado())) {
+            herramienta.setFechaRetornoEstimada(null);
+        }
     }
 }

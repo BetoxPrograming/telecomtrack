@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <h1 th:text="#{herramienta.titulo.baja}"></h1>
+
+    <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
+
+    <form th:action="@{/herramienta/baja}" method="post">
+        <input type="hidden" name="idHerramienta" th:value="${herramienta.idHerramienta}">
+
+        <div class="mb-3">
+            <label for="justificacionBaja" class="form-label" th:text="#{campo.justificacion.baja}"></label>
+            <textarea id="justificacionBaja" name="justificacionBaja" class="form-control" rows="4" th:text="${justificacionBaja}"></textarea>
+            <div class="text-danger small mt-1" th:if="${errorJustificacion}" th:text="#{validacion.herramienta.justificacion.requerido}"></div>
+        </div>
+
+        <button type="submit" class="btn btn-danger" th:text="#{herramienta.accion.baja}"></button>
+        <a th:href="@{/herramienta/listado}" class="btn btn-secondary" th:text="#{accion.regresar}"></a>
+    </form>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

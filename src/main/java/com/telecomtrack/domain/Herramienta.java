@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -37,6 +36,11 @@ public class Herramienta implements Serializable {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    @NotBlank(message = "{validacion.herramienta.categoria.requerido}")
+    @Size(max = 100, message = "{validacion.herramienta.categoria.longitud}")
+    @Column(nullable = false, length = 100)
+    private String categoria;
+
     @Size(max = 255, message = "{validacion.herramienta.descripcion.longitud}")
     @Column(length = 255)
     private String descripcion;
@@ -51,9 +55,9 @@ public class Herramienta implements Serializable {
     private LocalDate fechaRetornoEstimada;
 
     @Column(name = "fecha_baja_definitiva")
-    private LocalDate fechaBajaDefinitiva;
+    private LocalDate fechaBaja;
 
     @Size(max = 255, message = "{validacion.herramienta.justificacion.longitud}")
     @Column(name = "justificacion_baja_definitiva", length = 255)
-    private String justificacionBajaDefinitiva;
+    private String justificacionBaja;
 }

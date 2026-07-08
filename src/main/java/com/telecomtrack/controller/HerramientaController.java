@@ -28,177 +28,231 @@ public class HerramientaController {
         this.messageSource = messageSource;
     }
 
-    private void agregarMensajeExito(RedirectAttributes redirectAttributes, String mensajeCodigo, Locale locale) {
-        redirectAttributes.addFlashAttribute("mensaje", messageSource.getMessage(mensajeCodigo, null, locale));
-        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
-    }
-
     @GetMapping("/listado")
     public String listado(Model model) {
-
-        var herramientas = herramientaService.getHerramientas();
-
-        model.addAttribute("herramientas", herramientas);
-
+        model.addAttribute("herramientas", herramientaService.getHerramientas());
+        model.addAttribute("idiomaRuta", "/herramienta/listado");
         return "herramienta/listado";
     }
 
     @GetMapping("/catalogo")
     public String catalogo(Model model) {
-
-        var herramientas = herramientaService.getHerramientas();
-
-        model.addAttribute("herramientas", herramientas);
-
+        model.addAttribute("herramientas", herramientaService.getHerramientas());
+        model.addAttribute("idiomaRuta", "/herramienta/catalogo");
         return "herramienta/catalogo";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
-
         var herramienta = new Herramienta();
-        herramienta.setEstado("Disponible");
-
-        model.addAttribute("herramienta", herramienta);
-
-        return "herramienta/modifica";
+        herramienta.setEstado(HerramientaService.ESTADO_DISPONIBLE);
+        cargarFormulario(model, herramienta);
+        return "herramienta/formulario";
     }
 
     @PostMapping("/guardar")
     public String guardar(
             @Valid Herramienta herramienta,
             BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        var herramientaActual = obtenerHerramientaActual(herramienta.getIdHerramienta());
+
+        if (herramienta.getIdHerramienta() != null && herramientaActual == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
         if (herramientaService.codigoDuplicado(herramienta)) {
             bindingResult.rejectValue("codigo", "validacion.herramienta.codigo.duplicado");
         }
 
         if (bindingResult.hasErrors()) {
-            return "herramienta/modifica";
+            cargarFormulario(model, herramienta);
+            return "herramienta/formulario";
+        }
+
+        if (herramientaActual == null) {
+            herramienta.setEstado(HerramientaService.ESTADO_DISPONIBLE);
+            herramienta.setFechaRetornoEstimada(null);
+            herramienta.setFechaBaja(null);
+            herramienta.setJustificacionBaja(null);
+        } else {
+            herramienta.setEstado(herramientaActual.getEstado());
+            herramienta.setFechaRetornoEstimada(herramientaActual.getFechaRetornoEstimada());
+            herramienta.setFechaBaja(herramientaActual.getFechaBaja());
+            herramienta.setJustificacionBaja(herramientaActual.getJustificacionBaja());
         }
 
         herramientaService.guardar(herramienta);
 
-        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.guardada", locale);
+        var mensaje = herramientaActual == null
+                ? "herramienta.mensaje.guardada"
+                : "herramienta.mensaje.modificada";
 
+        agregarMensaje(redirectAttributes, mensaje, "success", locale);
         return "redirect:/herramienta/listado";
     }
 
     @GetMapping("/modificar/{idHerramienta}")
     public String modificar(
             @PathVariable Integer idHerramienta,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
 
-        var herramienta = herramientaService.getHerramienta(idHerramienta);
+        var herramienta = obtenerHerramientaActual(idHerramienta);
 
-        if (herramienta.isEmpty()) {
+        if (herramienta == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
             return "redirect:/herramienta/listado";
         }
 
-        model.addAttribute("herramienta", herramienta.get());
-
-        return "herramienta/modifica";
+        cargarFormulario(model, herramienta);
+        return "herramienta/formulario";
     }
 
     @GetMapping("/consultar/{idHerramienta}")
     public String consultar(
             @PathVariable Integer idHerramienta,
-            Model model) {
-
-        var herramienta = herramientaService.getHerramienta(idHerramienta);
-
-        if (herramienta.isEmpty()) {
-            return "redirect:/herramienta/listado";
-        }
-
-        model.addAttribute("herramienta", herramienta.get());
-
-        return "herramienta/consulta";
-    }
-
-    @GetMapping("/baja-definitiva/{idHerramienta}")
-    public String bajaDefinitivaFormulario(
-            @PathVariable Integer idHerramienta,
-            Model model) {
-
-        var herramienta = herramientaService.getHerramienta(idHerramienta);
-
-        if (herramienta.isEmpty()) {
-            return "redirect:/herramienta/listado";
-        }
-
-        model.addAttribute("herramienta", herramienta.get());
-
-        return "herramienta/baja-definitiva";
-    }
-
-    @PostMapping("/baja-definitiva")
-    public String bajaDefinitiva(
-            @RequestParam Integer idHerramienta,
-            @RequestParam(required = false) String justificacionBajaDefinitiva,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
 
-        if (justificacionBajaDefinitiva == null || justificacionBajaDefinitiva.isBlank()) {
-            var herramienta = herramientaService.getHerramienta(idHerramienta);
+        var herramienta = obtenerHerramientaActual(idHerramienta);
 
-            if (herramienta.isEmpty()) {
-                return "redirect:/herramienta/listado";
-            }
-
-            model.addAttribute("herramienta", herramienta.get());
-            model.addAttribute("errorJustificacion", true);
-
-            return "herramienta/baja-definitiva";
+        if (herramienta == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
+            return "redirect:/herramienta/listado";
         }
 
-        herramientaService.bajaDefinitiva(idHerramienta, justificacionBajaDefinitiva.trim());
+        model.addAttribute("herramienta", herramienta);
+        model.addAttribute("idiomaRuta", "/herramienta/consultar/" + idHerramienta);
+        return "herramienta/detalle";
+    }
 
-        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.baja", locale);
+    @GetMapping("/baja/{idHerramienta}")
+    public String bajaFormulario(
+            @PathVariable Integer idHerramienta,
+            Model model,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
 
+        var herramienta = obtenerHerramientaActual(idHerramienta);
+
+        if (herramienta == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
+
+        if (HerramientaService.ESTADO_BAJA.equals(herramienta.getEstado())) {
+            agregarMensaje(redirectAttributes, "herramienta.error.baja.no-permitida", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
+
+        model.addAttribute("herramienta", herramienta);
+        model.addAttribute("justificacionBaja", herramienta.getJustificacionBaja());
+        model.addAttribute("idiomaRuta", "/herramienta/baja/" + idHerramienta);
+        return "herramienta/baja";
+    }
+
+    @PostMapping("/baja")
+    public String baja(
+            @RequestParam Integer idHerramienta,
+            @RequestParam(required = false) String justificacionBaja,
+            Model model,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+
+        var herramienta = obtenerHerramientaActual(idHerramienta);
+
+        if (herramienta == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
+
+        if (justificacionBaja == null || justificacionBaja.isBlank()) {
+            model.addAttribute("herramienta", herramienta);
+            model.addAttribute("justificacionBaja", justificacionBaja);
+            model.addAttribute("errorJustificacion", true);
+            model.addAttribute("idiomaRuta", "/herramienta/baja/" + idHerramienta);
+            return "herramienta/baja";
+        }
+
+        if (!herramientaService.darDeBaja(idHerramienta, justificacionBaja.trim())) {
+            agregarMensaje(redirectAttributes, "herramienta.error.baja.no-permitida", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
+
+        agregarMensaje(redirectAttributes, "herramienta.mensaje.baja", "success", locale);
         return "redirect:/herramienta/listado";
     }
 
     @GetMapping("/mantenimiento/{idHerramienta}")
     public String mantenimientoFormulario(
             @PathVariable Integer idHerramienta,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
 
-        var herramienta = herramientaService.getHerramienta(idHerramienta);
+        var herramienta = obtenerHerramientaActual(idHerramienta);
 
-        if (herramienta.isEmpty()) {
+        if (herramienta == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
             return "redirect:/herramienta/listado";
         }
 
-        model.addAttribute("herramienta", herramienta.get());
+        if (!HerramientaService.ESTADO_DISPONIBLE.equals(herramienta.getEstado())) {
+            agregarMensaje(redirectAttributes, "herramienta.error.mantenimiento.no-permitido", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
+        model.addAttribute("herramienta", herramienta);
+        model.addAttribute("idiomaRuta", "/herramienta/mantenimiento/" + idHerramienta);
         return "herramienta/mantenimiento";
     }
 
     @PostMapping("/mantenimiento")
     public String mantenimiento(
-            @Valid Herramienta herramienta,
+            Herramienta herramienta,
             BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        var herramientaActual = obtenerHerramientaActual(herramienta.getIdHerramienta());
+
+        if (herramientaActual == null) {
+            agregarMensaje(redirectAttributes, "herramienta.error.no-existe", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
         if (herramienta.getFechaRetornoEstimada() == null) {
             bindingResult.rejectValue("fechaRetornoEstimada", "validacion.herramienta.fechaRetornoEstimada.requerido");
         }
 
         if (bindingResult.hasErrors()) {
+            herramienta.setCodigo(herramientaActual.getCodigo());
+            herramienta.setNombre(herramientaActual.getNombre());
+            herramienta.setCategoria(herramientaActual.getCategoria());
+            herramienta.setDescripcion(herramientaActual.getDescripcion());
+            herramienta.setEstado(herramientaActual.getEstado());
+            herramienta.setFechaBaja(herramientaActual.getFechaBaja());
+            herramienta.setJustificacionBaja(herramientaActual.getJustificacionBaja());
+            model.addAttribute("idiomaRuta", "/herramienta/mantenimiento/" + herramienta.getIdHerramienta());
             return "herramienta/mantenimiento";
         }
 
-        herramientaService.mantenimiento(
+        if (!herramientaService.enviarAMantenimiento(
                 herramienta.getIdHerramienta(),
-                herramienta.getFechaRetornoEstimada());
+                herramienta.getFechaRetornoEstimada())) {
+            agregarMensaje(redirectAttributes, "herramienta.error.mantenimiento.no-permitido", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
-        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.mantenimiento", locale);
-
+        agregarMensaje(redirectAttributes, "herramienta.mensaje.mantenimiento", "success", locale);
         return "redirect:/herramienta/listado";
     }
 
@@ -208,10 +262,43 @@ public class HerramientaController {
             RedirectAttributes redirectAttributes,
             Locale locale) {
 
-        herramientaService.volverDisponible(idHerramienta);
+        if (!herramientaService.volverDisponible(idHerramienta)) {
+            agregarMensaje(redirectAttributes, "herramienta.error.disponible.no-permitido", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
-        agregarMensajeExito(redirectAttributes, "herramienta.mensaje.disponible", locale);
-
+        agregarMensaje(redirectAttributes, "herramienta.mensaje.disponible", "success", locale);
         return "redirect:/herramienta/listado";
+    }
+
+    private Herramienta obtenerHerramientaActual(Integer idHerramienta) {
+        if (idHerramienta == null) {
+            return null;
+        }
+
+        return herramientaService.getHerramienta(idHerramienta).orElse(null);
+    }
+
+    private void cargarFormulario(Model model, Herramienta herramienta) {
+        model.addAttribute("herramienta", herramienta);
+        model.addAttribute("idiomaRuta", getRutaFormulario(herramienta));
+    }
+
+    private String getRutaFormulario(Herramienta herramienta) {
+        if (herramienta.getIdHerramienta() == null) {
+            return "/herramienta/nuevo";
+        }
+
+        return "/herramienta/modificar/" + herramienta.getIdHerramienta();
+    }
+
+    private void agregarMensaje(
+            RedirectAttributes redirectAttributes,
+            String codigo,
+            String tipo,
+            Locale locale) {
+
+        redirectAttributes.addFlashAttribute("mensaje", messageSource.getMessage(codigo, null, locale));
+        redirectAttributes.addFlashAttribute("tipoMensaje", tipo);
     }
 }

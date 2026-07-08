@@ -4,77 +4,36 @@
 
 <head th:fragment="head">
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{plantilla.titulo}"></title>
-
-    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"
-          rel="stylesheet">
-
-    <link th:href="@{/webjars/font-awesome/css/all.min.css}"
-          rel="stylesheet">
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/webjars/font-awesome/css/all.min.css}" rel="stylesheet">
 </head>
 
-<header th:fragment="header"
-        class="bg-dark text-white p-3">
-
+<header th:fragment="header" class="bg-dark text-white p-3">
     <div class="container d-flex justify-content-between align-items-center">
+        <a th:href="@{/}" class="text-white text-decoration-none">TelecomTrack</a>
 
-        <a th:href="@{/}"
-           class="text-white text-decoration-none">
-            TelecomTrack
-        </a>
-
-        <a th:href="@{/herramienta/catalogo}"
-            class="btn btn-outline-light btn-sm">
+        <a th:href="@{/herramienta/catalogo}" class="btn btn-outline-light btn-sm">
             <span th:text="#{herramienta.titulo.catalogo}"></span>
         </a>
 
-        <div class="dropdown">
-            <button class="btn btn-outline-light dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
+        <div class="dropdown" th:with="rutaIdioma=${idiomaRuta != null ? idiomaRuta : '/'}">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Idioma
             </button>
 
             <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                    <a class="dropdown-item"
-                       href="?lang=es">
-                        Español
-                    </a>
-                </li>
-
-                <li>
-                    <a class="dropdown-item"
-                       href="?lang=en">
-                        English
-                    </a>
-                </li>
-
-                <li>
-                    <a class="dropdown-item"
-                       href="?lang=ja">
-                        日本語
-                    </a>
-                </li>
-
-                <li>
-                    <a class="dropdown-item"
-                       href="?lang=zh">
-                        中文
-                    </a>
-                </li>
+                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=es'">Español</a></li>
+                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=en'">English</a></li>
+                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=ja'">日本語</a></li>
+                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=zh'">中文</a></li>
             </ul>
         </div>
-
     </div>
-
 </header>
-<footer th:fragment="footer">
-</footer>
+
+<footer th:fragment="footer"></footer>
 
 <div th:fragment="scripts">
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
@@ -83,71 +42,30 @@
 </div>
 
 <div th:fragment="confirmarDesactivarUsuario">
-
-    <div class="modal fade"
-         id="modalDesactivarUsuario"
-         tabindex="-1"
-         aria-labelledby="modalDesactivarUsuarioLabel"
-         aria-hidden="true">
-
+    <div class="modal fade" id="modalDesactivarUsuario" tabindex="-1" aria-labelledby="modalDesactivarUsuarioLabel" aria-hidden="true">
         <div class="modal-dialog">
-
             <div class="modal-content">
-
                 <div class="modal-header">
-
-                    <h5 class="modal-title"
-                        id="modalDesactivarUsuarioLabel"
-                        th:text="#{usuario.confirmacion.desactivar.titulo}">
-                    </h5>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            th:attr="aria-label=#{accion.cerrar}">
-                    </button>
-
+                    <h5 class="modal-title" id="modalDesactivarUsuarioLabel" th:text="#{usuario.confirmacion.desactivar.titulo}"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" th:attr="aria-label=#{accion.cerrar}"></button>
                 </div>
 
                 <div class="modal-body">
-
-                    <span th:text="#{usuario.confirmacion.desactivar.mensaje}">
-                    </span>
-
+                    <span th:text="#{usuario.confirmacion.desactivar.mensaje}"></span>
                     <strong id="modalDescripcion"></strong>?
-
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{accion.cancelar}"></button>
 
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                            th:text="#{accion.cancelar}">
-                    </button>
-
-                    <form th:action="@{/usuario/desactivar}"
-                          method="post">
-
-                        <input type="hidden"
-                               id="modalId"
-                               name="idUsuario">
-
-                        <button type="submit"
-                                class="btn btn-danger"
-                                th:text="#{accion.desactivar}">
-                        </button>
-
+                    <form th:action="@{/usuario/desactivar}" method="post">
+                        <input type="hidden" id="modalId" name="idUsuario">
+                        <button type="submit" class="btn btn-danger" th:text="#{accion.desactivar}"></button>
                     </form>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 </html>

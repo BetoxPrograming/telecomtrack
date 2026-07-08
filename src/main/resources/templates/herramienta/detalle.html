@@ -5,24 +5,17 @@
 <head th:replace="~{general/fragmentos :: head}"></head>
 
 <body>
-
 <header th:replace="~{general/fragmentos :: header}"></header>
 
 <main class="container py-5">
-
     <h1 th:text="#{herramienta.titulo.detalle}"></h1>
 
     <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
 
-    <a th:href="@{/herramienta/catalogo}"
-       class="btn btn-secondary"
-       th:text="#{accion.regresar}"></a>
-
+    <a th:href="@{/herramienta/listado}" class="btn btn-secondary" th:text="#{accion.regresar}"></a>
 </main>
 
 <footer th:replace="~{general/fragmentos :: footer}"></footer>
-
 <div th:replace="~{general/fragmentos :: scripts}"></div>
-
 </body>
 </html>
