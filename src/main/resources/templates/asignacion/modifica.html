@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-4">
+
+    <h1 class="mb-4"
+        th:text="#{asignacion.nueva}">
+        Nueva asignación
+    </h1>
+
+    <form th:action="@{/asignacion/guardar}"
+          th:object="${asignacionHerramienta}"
+          method="post"
+          class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="alert alert-danger"
+                 th:if="${#fields.hasGlobalErrors()}">
+
+                <p class="mb-0"
+                   th:each="error : ${#fields.globalErrors()}"
+                   th:text="${error}">
+                    Error
+                </p>
+            </div>
+
+            <div class="mb-3">
+                <label for="herramienta"
+                       class="form-label"
+                       th:text="#{asignacion.herramienta}">
+                    Herramienta
+                </label>
+
+                <select id="herramienta"
+                        class="form-select"
+                        th:field="*{herramienta.idHerramienta}"
+                        th:classappend="${#fields.hasErrors('herramienta')} ? 'is-invalid'">
+
+                    <option value=""
+                            th:text="#{accion.seleccionar}">
+                        Seleccione
+                    </option>
+
+                    <option th:each="herramienta : ${herramientas}"
+                            th:value="${herramienta.idHerramienta}"
+                            th:text="${herramienta.codigo + ' - ' + herramienta.nombre}">
+                        Herramienta
+                    </option>
+                </select>
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('herramienta')}"
+                     th:errors="*{herramienta}">
+                    Error
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="tecnico"
+                       class="form-label"
+                       th:text="#{asignacion.tecnico}">
+                    Técnico
+                </label>
+
+                <select id="tecnico"
+                        class="form-select"
+                        th:field="*{tecnico.idUsuario}"
+                        th:classappend="${#fields.hasErrors('tecnico')} ? 'is-invalid'">
+
+                    <option value=""
+                            th:text="#{accion.seleccionar}">
+                        Seleccione
+                    </option>
+
+                    <option th:each="tecnico : ${tecnicos}"
+                            th:value="${tecnico.idUsuario}"
+                            th:text="${tecnico.nombre + ' ' + tecnico.apellido}">
+                        Técnico
+                    </option>
+                </select>
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('tecnico')}"
+                     th:errors="*{tecnico}">
+                    Error
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="proyecto"
+                       class="form-label"
+                       th:text="#{asignacion.proyecto}">
+                    Proyecto
+                </label>
+
+                <select id="proyecto"
+                        class="form-select"
+                        th:field="*{proyecto.idProyecto}"
+                        th:classappend="${#fields.hasErrors('proyecto')} ? 'is-invalid'">
+
+                    <option value=""
+                            th:text="#{accion.seleccionar}">
+                        Seleccione
+                    </option>
+
+                    <option th:each="proyecto : ${proyectos}"
+                            th:value="${proyecto.idProyecto}"
+                            th:text="${proyecto.nombre}">
+                        Proyecto
+                    </option>
+                </select>
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('proyecto')}"
+                     th:errors="*{proyecto}">
+                    Error
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaAsignacion"
+                       class="form-label"
+                       th:text="#{asignacion.fecha}">
+                    Fecha de asignación
+                </label>
+
+                <input id="fechaAsignacion"
+                       type="date"
+                       class="form-control"
+                       th:field="*{fechaAsignacion}"
+                       th:classappend="${#fields.hasErrors('fechaAsignacion')} ? 'is-invalid'">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('fechaAsignacion')}"
+                     th:errors="*{fechaAsignacion}">
+                    Error
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+
+            <a class="btn btn-secondary"
+               th:href="@{/asignacion/listado}"
+               th:text="#{accion.cancelar}">
+                Cancelar
+            </a>
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    th:text="#{accion.guardar}">
+                Guardar
+            </button>
+
+        </div>
+
+    </form>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+</body>
+</html>
