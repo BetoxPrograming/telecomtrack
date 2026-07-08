@@ -28,6 +28,7 @@ nbdist/
 .vscode/
 
 # ── Configuración local (credenciales) ──────────
+src/main/resources/application.properties
 src/main/resources/hibernate.cfg.xml
 *.env
 local.properties

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>
+            <span th:text="#{mat.titulo}">Materiales</span>
+        </h2>
+        <a th:href="@{/materiales/nuevo}" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-1"></i>
+            <span th:text="#{mat.nuevo}">Nuevo material</span>
+        </a>
+    </div>
+
+    <div th:if="${exitoo}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i><span th:text="${exitoo}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- HU-09: Alerta de stock bajo -->
+    <div th:if="${not #lists.isEmpty(alertas)}" class="alert alert-warning border-start border-warning border-4 mb-4">
+        <h6 class="alert-heading fw-bold mb-2">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{mat.alerta.titulo}">Alerta de stock minimo</span>
+        </h6>
+        <p class="mb-1 small" th:text="#{mat.alerta.desc}">Los siguientes materiales tienen stock igual o inferior al minimo establecido:</p>
+        <ul class="mb-0 small">
+            <li th:each="a : ${alertas}">
+                <strong th:text="${a.nombre}"></strong>
+                &mdash; <span th:text="#{mat.alerta.stockActual}">Stock actual:</span>
+                <span class="text-danger fw-bold" th:text="${a.stockActual}"></span>
+                / <span th:text="#{mat.alerta.minimo}">Minimo:</span>
+                <span th:text="${a.stockMinimo}"></span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(materiales)}" class="text-center py-5 text-muted">
+                <i class="fa-solid fa-box-open fa-3x mb-3 d-block"></i>
+                <span th:text="#{mat.vacio}">No hay materiales registrados.</span>
+                <a th:href="@{/materiales/nuevo}" class="d-block mt-2" th:text="#{mat.vacio.agregar}">Agregar el primero</a>
+            </div>
+            <div class="table-responsive" th:if="${not #lists.isEmpty(materiales)}">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th th:text="#{mat.col.codigo}">Codigo</th>
+                            <th th:text="#{mat.col.nombre}">Nombre</th>
+                            <th th:text="#{mat.col.unidad}">Unidad</th>
+                            <th class="text-center" th:text="#{mat.col.stockActual}">Stock actual</th>
+                            <th class="text-center" th:text="#{mat.col.minimo}">Minimo</th>
+                            <th th:text="#{mat.col.categoria}">Categoria</th>
+                            <th th:text="#{mat.col.proveedor}">Proveedor</th>
+                            <th class="text-center" th:text="#{mat.col.acciones}">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="m : ${materiales}"
+                            th:classappend="${m.stockBajo} ? 'table-warning' : ''">
+                            <td><code th:text="${m.codigoUnico}"></code></td>
+                            <td th:text="${m.nombre}"></td>
+                            <td th:text="${m.unidadMedida}"></td>
+                            <td class="text-center">
+                                <span th:text="${m.stockActual}"
+                                    th:class="${m.stockBajo} ? 'badge bg-danger' : 'badge bg-success'"></span>
+                            </td>
+                            <td class="text-center" th:text="${m.stockMinimo}"></td>
+                            <td th:text="${m.categoria != null ? m.categoria.nombre : '—'}"></td>
+                            <td th:text="${m.proveedor != null ? m.proveedor.nombre : '—'}"></td>
+                            <td class="text-center text-nowrap">
+                                <a th:href="@{/materiales/{id}/entrada(id=${m.idMaterial})}"
+                                   class="btn btn-sm btn-success me-1"
+                                   th:title="#{mat.btn.entrada}">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </a>
+                                <a th:href="@{/materiales/editar/{id}(id=${m.idMaterial})}"
+                                   class="btn btn-sm btn-warning"
+                                   th:title="#{mat.btn.editar}">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>
