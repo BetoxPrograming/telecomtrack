@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <h1 th:text="${herramienta.idHerramienta == null} ? #{herramienta.titulo.agregar} : #{herramienta.titulo.modificar}"></h1>
+
+    <form th:action="@{/herramienta/guardar}" method="post" th:object="${herramienta}">
+        <input type="hidden" th:field="*{idHerramienta}">
+
+        <div class="mb-3">
+            <label for="codigo" class="form-label" th:text="#{campo.codigo}"></label>
+            <input type="text" id="codigo" class="form-control" th:field="*{codigo}" th:errorclass="is-invalid">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="nombre" class="form-label" th:text="#{campo.nombre}"></label>
+            <input type="text" id="nombre" class="form-control" th:field="*{nombre}" th:errorclass="is-invalid">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="categoria" class="form-label" th:text="#{campo.categoria}"></label>
+            <input type="text" id="categoria" class="form-control" th:field="*{categoria}" th:errorclass="is-invalid">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="descripcion" class="form-label" th:text="#{campo.descripcion}"></label>
+            <textarea id="descripcion" class="form-control" rows="4" th:field="*{descripcion}" th:errorclass="is-invalid"></textarea>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label" th:text="#{campo.estado}"></label>
+            <div class="form-control bg-light">
+                <span th:replace="~{herramienta/fragmentos :: estadoTexto(estado=${herramienta.estado})}"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" th:text="#{accion.guardar}"></button>
+        <a th:href="@{/herramienta/listado}" class="btn btn-secondary" th:text="#{accion.regresar}"></a>
+    </form>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

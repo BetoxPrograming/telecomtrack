@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 th:text="#{herramienta.titulo.catalogo}"></h1>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+            <tr>
+                <th th:text="#{campo.codigo}"></th>
+                <th th:text="#{campo.nombre}"></th>
+                <th th:text="#{campo.categoria}"></th>
+                <th th:text="#{campo.disponibilidad}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="herramienta : ${herramientas}">
+                <td th:text="${herramienta.codigo}"></td>
+                <td th:text="${herramienta.nombre}"></td>
+                <td th:text="${herramienta.categoria}"></td>
+                <td>
+                    <span th:replace="~{herramienta/fragmentos :: disponibilidadPublica(estado=${herramienta.estado})}"></span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(herramientas)}">
+                <td colspan="4" class="text-center" th:text="#{herramienta.mensaje.sin-registros}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="toast">
+    <div th:if="${mensaje != null}" class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="toastMensaje" class="toast show text-bg-primary border-0" th:classappend="${tipoMensaje == 'success'} ? ' text-bg-success' : ' text-bg-danger'" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" th:text="${mensaje}"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<span th:fragment="estadoTexto(estado)" th:switch="${estado}">
+    <span th:case="'Disponible'" th:text="#{estado.disponible}"></span>
+    <span th:case="'Mantenimiento'" th:text="#{estado.mantenimiento}"></span>
+    <span th:case="'Baja'" th:text="#{estado.baja}"></span>
+    <span th:case="*" th:text="${estado}"></span>
+</span>
+
+<span th:fragment="disponibilidadPublica(estado)">
+    <span th:text="${estado == 'Disponible'} ? #{estado.disponible} : #{estado.noDisponible}"></span>
+</span>
+
+<div th:fragment="fichaHerramienta(herramienta)">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="mb-2">
+                <strong><span th:text="#{campo.codigo}"></span>:</strong>
+                <span th:text="${herramienta.codigo}"></span>
+            </div>
+            <div class="mb-2">
+                <strong><span th:text="#{campo.nombre}"></span>:</strong>
+                <span th:text="${herramienta.nombre}"></span>
+            </div>
+            <div class="mb-2">
+                <strong><span th:text="#{campo.categoria}"></span>:</strong>
+                <span th:text="${herramienta.categoria}"></span>
+            </div>
+            <div class="mb-2" th:if="${herramienta.descripcion != null and !#strings.isEmpty(herramienta.descripcion)}">
+                <strong><span th:text="#{campo.descripcion}"></span>:</strong>
+                <span th:text="${herramienta.descripcion}"></span>
+            </div>
+            <div class="mb-2">
+                <strong><span th:text="#{campo.estado}"></span>:</strong>
+                <span th:replace="~{herramienta/fragmentos :: estadoTexto(estado=${herramienta.estado})}"></span>
+            </div>
+            <div class="mb-2" th:if="${herramienta.fechaRetornoEstimada != null}">
+                <strong><span th:text="#{campo.fecha.retorno.estimada}"></span>:</strong>
+                <span th:text="${herramienta.fechaRetornoEstimada}"></span>
+            </div>
+            <div class="mb-2" th:if="${herramienta.fechaBaja != null}">
+                <strong><span th:text="#{campo.fecha.baja}"></span>:</strong>
+                <span th:text="${herramienta.fechaBaja}"></span>
+            </div>
+            <div class="mb-2" th:if="${herramienta.justificacionBaja != null and !#strings.isEmpty(herramienta.justificacionBaja)}">
+                <strong><span th:text="#{campo.justificacion.baja}"></span>:</strong>
+                <span th:text="${herramienta.justificacionBaja}"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

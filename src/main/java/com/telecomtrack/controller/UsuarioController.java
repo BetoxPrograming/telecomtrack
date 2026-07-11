@@ -6,7 +6,10 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -32,19 +35,16 @@ public class UsuarioController {
 
     @GetMapping("/listado")
     public String listado(Model model) {
-        var usuarios = usuarioService.getUsuarios(false);
-
-        model.addAttribute("usuarios", usuarios);
-
+        model.addAttribute("usuarios", usuarioService.getUsuarios(false));
+        model.addAttribute("idiomaRuta", "/usuario/listado");
         return "usuario/listado";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Usuario usuario, Model model) {
         usuario.setActivo(true);
-
         agregarRoles(model);
-
+        model.addAttribute("idiomaRuta", "/usuario/nuevo");
         return "usuario/modifica";
     }
 
@@ -56,11 +56,13 @@ public class UsuarioController {
 
         if (bindingResult.hasErrors()) {
             agregarRoles(model);
+            model.addAttribute("idiomaRuta", usuario.getIdUsuario() == null
+                    ? "/usuario/nuevo"
+                    : "/usuario/modificar/" + usuario.getIdUsuario());
             return "usuario/modifica";
         }
 
         usuarioService.save(usuario);
-
         return "redirect:/usuario/listado";
     }
 
@@ -76,19 +78,14 @@ public class UsuarioController {
         }
 
         model.addAttribute("usuario", usuario.get());
+        model.addAttribute("idiomaRuta", "/usuario/modificar/" + idUsuario);
         agregarRoles(model);
-
         return "usuario/modifica";
     }
 
     @PostMapping("/desactivar")
-    public String desactivar(
-            @RequestParam Integer idUsuario) {
-
+    public String desactivar(@RequestParam Integer idUsuario) {
         usuarioService.desactivar(idUsuario);
-
         return "redirect:/usuario/listado";
     }
-
-
 }
