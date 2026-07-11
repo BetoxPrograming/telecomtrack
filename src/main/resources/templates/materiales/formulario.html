@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-box me-2"></i>
+                        <span th:text="${material.idMaterial != null ? #{mat.form.editar} : #{mat.form.nuevo}}">Material</span>
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/materiales/guardar}" th:object="${material}" method="post" novalidate>
+                        <input type="hidden" th:field="*{idMaterial}" />
+
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold">
+                                    <span th:text="#{mat.form.codigoUnico}">Codigo unico</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" th:field="*{codigoUnico}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('codigoUnico')} ? ' is-invalid'"
+                                    th:placeholder="#{mat.form.codigoUnico.placeholder}" />
+                                <div class="invalid-feedback"
+                                    th:if="${#fields.hasErrors('codigoUnico')}"
+                                    th:errors="*{codigoUnico}"></div>
+                            </div>
+
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold">
+                                    <span th:text="#{mat.form.nombre}">Nombre</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" th:field="*{nombre}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('nombre')} ? ' is-invalid'"
+                                    th:placeholder="#{mat.form.nombre.placeholder}" />
+                                <div class="invalid-feedback"
+                                    th:if="${#fields.hasErrors('nombre')}"
+                                    th:errors="*{nombre}"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" th:text="#{mat.form.descripcion}">Descripción</label>
+                                <input type="text" th:field="*{descripcion}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('descripcion')} ? ' is-invalid'"
+                                    th:placeholder="#{mat.form.descripcion.placeholder}" />
+                                <div class="invalid-feedback"
+                                    th:if="${#fields.hasErrors('descripcion')}"
+                                    th:errors="*{descripcion}"></div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    <span th:text="#{mat.form.unidadMedida}">Unidad de medida</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" th:field="*{unidadMedida}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('unidadMedida')} ? ' is-invalid'"
+                                    th:placeholder="#{mat.form.unidadMedida.placeholder}" />
+                                <div class="invalid-feedback"
+                                    th:if="${#fields.hasErrors('unidadMedida')}"
+                                    th:errors="*{unidadMedida}"></div>
+                            </div>
+
+                            <div class="col-md-4 offset-md-4">
+                                <label class="form-label fw-semibold">
+                                    <span th:text="#{mat.form.stockMinimo}">Stock mínimo</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" th:field="*{stockMinimo}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('stockMinimo')} ? ' is-invalid'"
+                                    min="0" />
+                                <div class="form-text" th:text="#{mat.form.stockMinimo.ayuda}">Se mostrará alerta cuando el stock llegue a este valor.</div>
+                                <div class="invalid-feedback"
+                                    th:if="${#fields.hasErrors('stockMinimo')}"
+                                    th:errors="*{stockMinimo}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" th:text="#{mat.form.categoria}">Categoria</label>
+                                <select name="categoriaId" class="form-select">
+                                    <option value="" th:text="#{mat.form.categoria.ninguna}">-- Sin categoria --</option>
+                                    <option th:each="c : ${categorias}"
+                                        th:value="${c.idCategoria}"
+                                        th:text="${c.nombre}"
+                                        th:selected="${material.categoria != null and material.categoria.idCategoria == c.idCategoria}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" th:text="#{mat.form.proveedor}">Proveedor</label>
+                                <select name="proveedorId" class="form-select">
+                                    <option value="" th:text="#{mat.form.proveedor.ninguno}">-- Sin proveedor --</option>
+                                    <option th:each="p : ${proveedores}"
+                                        th:value="${p.idProveedor}"
+                                        th:text="${p.nombre}"
+                                        th:selected="${material.proveedor != null and material.proveedor.idProveedor == p.idProveedor}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a th:href="@{/materiales}" class="btn btn-outline-secondary">
+                                <i class="fa-solid fa-xmark me-1"></i>
+                                <span th:text="#{mat.form.cancelar}">Cancelar</span>
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-floppy-disk me-1"></i>
+                                <span th:text="#{mat.form.guardar}">Guardar</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 th:text="#{asignacion.titulo}">
+            Asignaciones de herramientas
+        </h1>
+
+        <a class="btn btn-primary"
+           th:href="@{/asignacion/nuevo}"
+           th:text="#{asignacion.nueva}">
+            Nueva asignación
+        </a>
+    </div>
+
+    <div class="alert alert-info"
+         th:if="${#lists.isEmpty(asignaciones)}"
+         th:text="#{asignacion.sinRegistros}">
+        No existen asignaciones activas.
+    </div>
+
+    <div class="table-responsive"
+         th:unless="${#lists.isEmpty(asignaciones)}">
+
+        <table class="table table-striped table-hover align-middle">
+
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{asignacion.herramienta}">
+                    Herramienta
+                </th>
+
+                <th th:text="#{asignacion.tecnico}">
+                    Técnico
+                </th>
+
+                <th th:text="#{asignacion.proyecto}">
+                    Proyecto
+                </th>
+
+                <th th:text="#{asignacion.fecha}">
+                    Fecha de asignación
+                </th>
+
+                <th th:text="#{campo.estado}">
+                    Estado
+                </th>
+
+                <th th:text="#{campo.acciones}">
+                    Acciones
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="asignacion : ${asignaciones}">
+
+                <td th:text="${asignacion.herramienta.nombre}">
+                    Herramienta
+                </td>
+
+                <td th:text="${asignacion.tecnico.nombre
+                        + ' '
+                        + asignacion.tecnico.apellido}">
+                    Técnico
+                </td>
+
+                <td th:text="${asignacion.proyecto.nombre}">
+                    Proyecto
+                </td>
+
+                <td th:text="${asignacion.fechaAsignacion}">
+                    2026-07-07
+                </td>
+
+                <td>
+                    <span class="badge text-bg-success"
+                          th:if="${asignacion.activa}"
+                          th:text="#{asignacion.estado.activa}">
+                        Activa
+                    </span>
+                </td>
+
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                       th:href="@{/devolucion/nueva/{id}(
+                            id=${asignacion.idAsignacion}
+                       )}"
+                       th:text="#{asignacion.registrarDevolucion}">
+                        Registrar devolución
+                    </a>
+                </td>
+
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+</body>
+</html>

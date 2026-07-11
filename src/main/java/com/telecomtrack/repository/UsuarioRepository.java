@@ -10,4 +10,6 @@ import java.util.List;
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     List<Usuario> findByActivoTrue();
+    List<Usuario> findByActivoTrueAndRolOrderByNombreAsc(String rol);
+
 }
