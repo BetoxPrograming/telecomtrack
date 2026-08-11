@@ -12,6 +12,8 @@ import java.util.Optional;
 public class UsuarioService {
 
     private static final String ROL_TECNICO = "Técnico";
+    private static final String ROL_SUPERVISOR = "Supervisor";
+    private static final String ROL_BODEGUERO = "Bodeguero";
 
     private final UsuarioRepository usuarioRepository;
 
@@ -32,6 +34,18 @@ public class UsuarioService {
     public List<Usuario> getTecnicosActivos() {
         return usuarioRepository
                 .findByActivoTrueAndRolOrderByNombreAsc(ROL_TECNICO);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Usuario> getSupervisoresActivos() {
+        return usuarioRepository
+                .findByActivoTrueAndRolOrderByNombreAsc(ROL_SUPERVISOR);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Usuario> getBodeguerosActivos() {
+        return usuarioRepository
+                .findByActivoTrueAndRolOrderByNombreAsc(ROL_BODEGUERO);
     }
 
     @Transactional(readOnly = true)

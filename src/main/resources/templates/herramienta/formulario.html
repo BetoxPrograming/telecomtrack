@@ -37,6 +37,18 @@
             <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
         </div>
 
+        <div class="mb-3">
+            <label for="ubicacionId" class="form-label" th:text="#{campo.ubicacion}"></label>
+            <select id="ubicacionId" name="ubicacionId" class="form-select">
+                <option value="" th:text="#{ubicacion.seleccionar}">-- Seleccione --</option>
+                <option th:each="ubi : ${ubicaciones}"
+                        th:value="${ubi.idUbicacion}"
+                        th:text="${ubi.nombre}"
+                        th:selected="${herramienta.ubicacion != null and herramienta.ubicacion.idUbicacion == ubi.idUbicacion}">
+                </option>
+            </select>
+        </div>
+
         <div class="mb-4">
             <label class="form-label" th:text="#{campo.estado}"></label>
             <div class="form-control bg-light">

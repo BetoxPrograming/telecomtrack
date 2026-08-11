@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+
+    <h1 th:text="#{proyecto.titulo.detalle}"></h1>
+
+    <div class="card">
+        <div class="card-body">
+
+            <div class="mb-3">
+                <strong>
+                    <span th:text="#{campo.nombre}"></span>:
+                </strong>
+                <span th:text="${proyecto.nombre}"></span>
+            </div>
+
+            <div class="mb-3">
+                <strong>
+                    <span th:text="#{campo.descripcion}"></span>:
+                </strong>
+                <span th:text="${proyecto.descripcion}"></span>
+            </div>
+
+            <div class="mb-3">
+                <strong>
+                    <span th:text="#{proyecto.campo.fechaInicio}"></span>:
+                </strong>
+                <span th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}"></span>
+            </div>
+
+            <div class="mb-3"
+                 th:if="${proyecto.fechaFinEstimada != null}">
+                <strong>
+                    <span th:text="#{proyecto.campo.fechaFinEstimada}"></span>:
+                </strong>
+                <span th:text="${#temporals.format(proyecto.fechaFinEstimada, 'dd/MM/yyyy')}"></span>
+            </div>
+
+            <div class="mb-3">
+                <strong>
+                    <span th:text="#{campo.estado}"></span>:
+                </strong>
+                <span th:text="${proyecto.estado}"></span>
+            </div>
+
+            <div class="mb-3">
+                <strong>
+                    <span th:text="#{proyecto.campo.supervisor}"></span>:
+                </strong>
+                <span th:text="${proyecto.supervisor.nombre + ' ' + proyecto.supervisor.apellido}"></span>
+            </div>
+
+            <a th:href="@{/proyecto/modificar/{idProyecto}
+               (idProyecto=${proyecto.idProyecto})}"
+               class="btn btn-warning"
+               th:text="#{accion.modificar}">
+            </a>
+
+            <a th:href="@{/proyecto/listado}"
+               class="btn btn-secondary"
+               th:text="#{accion.regresar}">
+            </a>
+
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0" th:text="#{listadoMaterialEstimado.titulo.listado}">Listados de materiales estimados</h5>
+                <a th:href="@{/listado-material-estimado/nuevo(proyectoId=${proyecto.idProyecto})}"
+                   class="btn btn-primary btn-sm"
+                   th:text="#{listadoMaterialEstimado.accion.nuevo}">
+                </a>
+            </div>
+
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                <tr>
+                    <th th:text="#{listadoMaterialEstimado.campo.fecha}"></th>
+                    <th th:text="#{campo.estado}"></th>
+                    <th th:text="#{campo.acciones}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="l : ${listadosEstimados}">
+                    <td th:text="${#temporals.format(l.fechaCreacion, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:switch="${l.estado}">
+                            <span th:case="'PENDIENTE'" class="badge bg-warning text-dark" th:text="#{listadoMaterialEstimado.estado.pendiente}"></span>
+                            <span th:case="'APROBADO'" class="badge bg-success" th:text="#{listadoMaterialEstimado.estado.aprobado}"></span>
+                            <span th:case="'RECHAZADO'" class="badge bg-danger" th:text="#{listadoMaterialEstimado.estado.rechazado}"></span>
+                            <span th:case="'MODIFICACION_SOLICITADA'" class="badge bg-info text-dark" th:text="#{listadoMaterialEstimado.estado.modificacionSolicitada}"></span>
+                        </span>
+                    </td>
+                    <td>
+                        <a th:href="@{/listado-material-estimado/consultar/{id}(id=${l.idListado})}"
+                           class="btn btn-sm btn-info" th:text="#{accion.consultar}">
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(listadosEstimados)}">
+                    <td colspan="3" class="text-center" th:text="#{listadoMaterialEstimado.mensaje.sinRegistros}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+</body>
+</html>

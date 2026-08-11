@@ -54,6 +54,10 @@ public class Material implements Serializable {
     @JoinColumn(name = "id_proveedor")
     private Proveedor proveedor;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_ubicacion")
+    private Ubicacion ubicacion;
+
     public boolean isStockBajo() {
         return stockActual != null && stockMinimo != null && stockActual <= stockMinimo;
     }

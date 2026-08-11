@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <h2 class="fw-bold mb-4">
+        <i class="fa-solid fa-list-check text-primary me-2"></i>
+        <span th:text="#{listadoMaterialEstimado.titulo.detalle}">Detalle del listado</span>
+        &mdash; <span th:text="${listado.proyecto.nombre}"></span>
+    </h2>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <p>
+                <strong th:text="#{listadoMaterialEstimado.campo.fecha}">Fecha</strong>:
+                <span th:text="${#temporals.format(listado.fechaCreacion, 'dd/MM/yyyy')}"></span>
+                &mdash;
+                <strong th:text="#{campo.estado}">Estado</strong>:
+                <span th:switch="${listado.estado}">
+                    <span th:case="'PENDIENTE'" class="badge bg-warning text-dark" th:text="#{listadoMaterialEstimado.estado.pendiente}"></span>
+                    <span th:case="'APROBADO'" class="badge bg-success" th:text="#{listadoMaterialEstimado.estado.aprobado}"></span>
+                    <span th:case="'RECHAZADO'" class="badge bg-danger" th:text="#{listadoMaterialEstimado.estado.rechazado}"></span>
+                    <span th:case="'MODIFICACION_SOLICITADA'" class="badge bg-info text-dark" th:text="#{listadoMaterialEstimado.estado.modificacionSolicitada}"></span>
+                </span>
+            </p>
+            <p th:if="${listado.usuarioDecision != null}">
+                <strong th:text="#{solicitud.campo.usuarioDecision}">Decidido por</strong>:
+                <span th:text="${listado.usuarioDecision.nombre + ' ' + listado.usuarioDecision.apellido}"></span>
+                <span th:text="${'(' + #temporals.format(listado.fechaDecision, 'dd/MM/yyyy') + ')'}"></span>
+            </p>
+            <p th:if="${listado.comentarioSupervisor != null}">
+                <strong th:text="#{listadoMaterialEstimado.campo.comentario}">Comentario</strong>:
+                <span th:text="${listado.comentarioSupervisor}"></span>
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white" th:text="#{listadoMaterialEstimado.campo.detalles}">Materiales estimados</div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th th:text="#{mat.col.codigo}">Codigo</th>
+                    <th th:text="#{mat.col.nombre}">Nombre</th>
+                    <th th:text="#{listadoMaterialEstimado.campo.cantidadEstimada}">Cantidad estimada</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${listado.detalles}">
+                    <td th:text="${d.material.codigoUnico}"></td>
+                    <td th:text="${d.material.nombre}"></td>
+                    <td th:text="${d.cantidadEstimada}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0" th:if="${listado.estado == 'PENDIENTE'}">
+        <div class="card-header bg-secondary text-white" th:text="#{listadoMaterialEstimado.accion.decidir}">Decision del supervisor</div>
+        <div class="card-body">
+
+            <div class="alert alert-info" th:if="${supervisorId == null}">
+                <span th:text="#{listadoMaterialEstimado.mensaje.seleccioneSupervisor}">Seleccione un supervisor en la lista de pendientes para poder decidir.</span>
+            </div>
+
+            <form th:if="${supervisorId != null}"
+                  th:action="@{/listado-material-estimado/decidir/{id}(id=${listado.idListado})}" method="post">
+
+                <input type="hidden" name="supervisorId" th:value="${supervisorId}" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" th:text="#{listadoMaterialEstimado.campo.comentario}">Comentario</label>
+                    <textarea name="comentario" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" name="nuevoEstado" value="APROBADO" class="btn btn-success">
+                        <span th:text="#{listadoMaterialEstimado.accion.aprobar}">Aprobar</span>
+                    </button>
+                    <button type="submit" name="nuevoEstado" value="MODIFICACION_SOLICITADA" class="btn btn-warning">
+                        <span th:text="#{listadoMaterialEstimado.accion.pedirModificacion}">Pedir modificacion</span>
+                    </button>
+                    <button type="submit" name="nuevoEstado" value="RECHAZADO" class="btn btn-danger">
+                        <span th:text="#{listadoMaterialEstimado.accion.rechazar}">Rechazar</span>
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/proyecto/consultar/{id}(id=${listado.proyecto.idProyecto})}"
+           class="btn btn-secondary" th:text="#{accion.regresar}">Regresar</a>
+    </div>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

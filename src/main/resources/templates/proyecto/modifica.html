@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+
+    <h1 th:text="${proyecto.idProyecto == null}
+            ? #{proyecto.titulo.agregar}
+            : #{proyecto.titulo.modificar}">
+    </h1>
+
+    <form th:action="@{/proyecto/guardar}"
+          method="post"
+          th:object="${proyecto}">
+
+        <input type="hidden"
+               th:field="*{idProyecto}">
+
+        <div class="mb-3">
+
+            <label for="nombre"
+                   class="form-label"
+                   th:text="#{campo.nombre}">
+            </label>
+
+            <input type="text"
+                   id="nombre"
+                   class="form-control"
+                   th:field="*{nombre}"
+                   th:errorclass="is-invalid">
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('nombre')}"
+                 th:errors="*{nombre}">
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label for="descripcion"
+                   class="form-label"
+                   th:text="#{campo.descripcion}">
+            </label>
+
+            <textarea id="descripcion"
+                      class="form-control"
+                      rows="4"
+                      th:field="*{descripcion}"
+                      th:errorclass="is-invalid">
+            </textarea>
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('descripcion')}"
+                 th:errors="*{descripcion}">
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label for="fechaInicio"
+                       class="form-label"
+                       th:text="#{proyecto.campo.fechaInicio}">
+                </label>
+
+                <input type="date"
+                       id="fechaInicio"
+                       class="form-control"
+                       th:field="*{fechaInicio}"
+                       th:errorclass="is-invalid">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('fechaInicio')}"
+                     th:errors="*{fechaInicio}">
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label for="fechaFinEstimada"
+                       class="form-label"
+                       th:text="#{proyecto.campo.fechaFinEstimada}">
+                </label>
+
+                <input type="date"
+                       id="fechaFinEstimada"
+                       class="form-control"
+                       th:field="*{fechaFinEstimada}"
+                       th:errorclass="is-invalid">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('fechaFinEstimada')}"
+                     th:errors="*{fechaFinEstimada}">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label for="estado"
+                   class="form-label"
+                   th:text="#{campo.estado}">
+            </label>
+
+            <select id="estado"
+                    class="form-select"
+                    th:field="*{estado}"
+                    th:errorclass="is-invalid">
+
+                <option value="Activo"
+                        th:text="#{proyecto.estado.activo}">
+                </option>
+
+                <option value="Finalizado"
+                        th:text="#{proyecto.estado.finalizado}">
+                </option>
+
+            </select>
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('estado')}"
+                 th:errors="*{estado}">
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label for="supervisor"
+                   class="form-label"
+                   th:text="#{proyecto.campo.supervisor}">
+            </label>
+
+            <select id="supervisor"
+                    class="form-select"
+                    th:field="*{supervisor}"
+                    th:errorclass="is-invalid">
+
+                <option value=""
+                        th:text="#{rol.seleccionar}">
+                </option>
+
+                <option th:each="supervisor : ${supervisores}"
+                        th:value="${supervisor.idUsuario}"
+                        th:text="${supervisor.nombre + ' ' + supervisor.apellido}">
+                </option>
+
+            </select>
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('supervisor')}"
+                 th:errors="*{supervisor}">
+            </div>
+
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary"
+                th:text="#{accion.guardar}">
+        </button>
+
+        <a th:href="@{/proyecto/listado}"
+           class="btn btn-secondary"
+           th:text="#{accion.regresar}">
+        </a>
+
+    </form>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+</body>
+</html>

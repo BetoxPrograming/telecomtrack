@@ -33,4 +33,9 @@ public class ProyectoService {
     public Optional<Proyecto> getProyecto(Integer idProyecto) {
         return proyectoRepository.findById(idProyecto);
     }
+
+    @Transactional
+    public Proyecto save(Proyecto proyecto) {
+        return proyectoRepository.save(proyecto);
+    }
 }

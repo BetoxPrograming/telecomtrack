@@ -29,6 +29,11 @@ public class MaterialService {
     }
 
     @Transactional(readOnly = true)
+    public List<Material> buscarPorUbicacion(Integer idUbicacion, String texto) {
+        return materialRepository.buscarPorUbicacion(idUbicacion, texto);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<Material> buscarPorId(Long id) {
         return materialRepository.findById(id);
     }

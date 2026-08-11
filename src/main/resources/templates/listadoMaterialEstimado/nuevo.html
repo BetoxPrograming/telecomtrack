@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <h2 class="fw-bold mb-4">
+        <i class="fa-solid fa-list-check text-primary me-2"></i>
+        <span th:text="#{listadoMaterialEstimado.titulo.nuevo}">Nuevo listado de materiales estimados</span>
+        &mdash; <span th:text="${proyecto.nombre}"></span>
+    </h2>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <form th:action="@{/listado-material-estimado/guardar}" method="post">
+
+        <input type="hidden" name="proyectoId" th:value="${proyecto.idProyecto}" />
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                <span th:text="#{mat.titulo}">Materiales</span>
+            </div>
+            <div class="card-body">
+                <input type="text" id="filtroMaterial" class="form-control mb-3"
+                       th:placeholder="#{solicitud.buscar.placeholder}" />
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="tablaMateriales">
+                        <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th th:text="#{mat.col.codigo}">Codigo</th>
+                            <th th:text="#{mat.col.nombre}">Nombre</th>
+                            <th th:text="#{listadoMaterialEstimado.campo.cantidadEstimada}">Cantidad estimada</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="m : ${materiales}"
+                            th:attr="data-filtro=${#strings.toLowerCase(m.codigoUnico + ' ' + m.nombre)}">
+                            <td><input type="checkbox" name="materialIds" th:value="${m.idMaterial}" /></td>
+                            <td th:text="${m.codigoUnico}"></td>
+                            <td th:text="${m.nombre}"></td>
+                            <td>
+                                <input type="number" min="1"
+                                       th:name="${'cantidadMaterial_' + m.idMaterial}"
+                                       class="form-control form-control-sm" style="width: 100px" />
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mb-5">
+            <a th:href="@{/proyecto/consultar/{id}(id=${proyecto.idProyecto})}"
+               class="btn btn-outline-secondary" th:text="#{accion.cancelar}">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk me-1"></i>
+                <span th:text="#{listadoMaterialEstimado.accion.guardar}">Guardar listado</span>
+            </button>
+        </div>
+
+    </form>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("filtroMaterial");
+        var tabla = document.getElementById("tablaMateriales");
+        if (!input || !tabla) return;
+        input.addEventListener("input", function () {
+            var texto = input.value.trim().toLowerCase();
+            tabla.querySelectorAll("tbody tr[data-filtro]").forEach(function (fila) {
+                var filtro = fila.getAttribute("data-filtro") || "";
+                fila.style.display = filtro.indexOf(texto) !== -1 ? "" : "none";
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

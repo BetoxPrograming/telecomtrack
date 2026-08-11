@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <h2 class="fw-bold mb-4">
+        <i class="fa-solid fa-clipboard-list text-primary me-2"></i>
+        <span th:text="#{solicitud.titulo.nueva}">Nueva solicitud</span>
+    </h2>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get" th:action="@{/solicitud/nueva}" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold" th:text="#{campo.ubicacion}">Bodega de origen</label>
+                    <select name="ubicacionId" class="form-select" onchange="this.form.submit()">
+                        <option value="" th:text="#{ubicacion.seleccionar}">-- Seleccione --</option>
+                        <option th:each="u : ${ubicaciones}"
+                                th:value="${u.idUbicacion}"
+                                th:text="${u.nombre}"
+                                th:selected="${ubicacionId != null and ubicacionId == u.idUbicacion}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <form th:action="@{/solicitud/guardar}" method="post" id="formSolicitud">
+
+        <input type="hidden" name="ubicacionId" th:value="${ubicacionId}" />
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" th:text="#{asignacion.tecnico}">Tecnico</label>
+                        <select name="tecnicoId" class="form-select" required>
+                            <option value="" th:text="#{rol.seleccionar}">-- Seleccione --</option>
+                            <option th:each="t : ${tecnicos}"
+                                    th:value="${t.idUsuario}"
+                                    th:text="${t.nombre + ' ' + t.apellido}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" th:text="#{asignacion.proyecto}">Proyecto</label>
+                        <select name="proyectoId" class="form-select" required>
+                            <option value="" th:text="#{rol.seleccionar}">-- Seleccione --</option>
+                            <option th:each="p : ${proyectos}"
+                                    th:value="${p.idProyecto}"
+                                    th:text="${p.nombre}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${ubicacionId == null}" class="alert alert-info">
+            <span th:text="#{solicitud.mensaje.seleccioneBodega}">Seleccione una bodega para ver los articulos disponibles.</span>
+        </div>
+
+        <div th:if="${ubicacionId != null}" class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="fa-solid fa-screwdriver-wrench me-2"></i>
+                <span th:text="#{herramienta.titulo.listado}">Herramientas</span>
+            </div>
+            <div class="card-body">
+                <input type="text" id="filtroHerramienta" class="form-control mb-3"
+                       th:placeholder="#{solicitud.buscar.placeholder}" />
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="tablaHerramientas">
+                        <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th th:text="#{herramienta.campo.codigo}">Codigo</th>
+                            <th th:text="#{herramienta.campo.nombre}">Nombre</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="h : ${herramientas}"
+                            th:attr="data-filtro=${#strings.toLowerCase(h.codigo + ' ' + h.nombre)}">
+                            <td><input type="checkbox" name="herramientaIds" th:value="${h.idHerramienta}" /></td>
+                            <td th:text="${h.codigo}"></td>
+                            <td th:text="${h.nombre}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(herramientas)}">
+                            <td colspan="3" class="text-center text-muted" th:text="#{herramienta.mensaje.sin-registros}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${ubicacionId != null}" class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                <span th:text="#{mat.titulo}">Materiales</span>
+            </div>
+            <div class="card-body">
+                <input type="text" id="filtroMaterial" class="form-control mb-3"
+                       th:placeholder="#{solicitud.buscar.placeholder}" />
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="tablaMateriales">
+                        <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th th:text="#{mat.col.codigo}">Codigo</th>
+                            <th th:text="#{mat.col.nombre}">Nombre</th>
+                            <th class="text-center" th:text="#{mat.col.stockActual}">Stock</th>
+                            <th th:text="#{solicitud.campo.cantidad}">Cantidad</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="m : ${materiales}"
+                            th:attr="data-filtro=${#strings.toLowerCase(m.codigoUnico + ' ' + m.nombre)}">
+                            <td><input type="checkbox" name="materialIds" th:value="${m.idMaterial}" /></td>
+                            <td th:text="${m.codigoUnico}"></td>
+                            <td th:text="${m.nombre}"></td>
+                            <td class="text-center" th:text="${m.stockActual}"></td>
+                            <td>
+                                <input type="number" min="1" th:max="${m.stockActual}"
+                                       th:name="${'cantidadMaterial_' + m.idMaterial}"
+                                       class="form-control form-control-sm" style="width: 90px" />
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(materiales)}">
+                            <td colspan="5" class="text-center text-muted" th:text="#{mat.vacio}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mb-5" th:if="${ubicacionId != null}">
+            <a th:href="@{/}" class="btn btn-outline-secondary" th:text="#{accion.cancelar}">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk me-1"></i>
+                <span th:text="#{solicitud.accion.guardar}">Guardar solicitud</span>
+            </button>
+        </div>
+
+    </form>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+        function conectarFiltro(idInput, idTabla) {
+            var input = document.getElementById(idInput);
+            var tabla = document.getElementById(idTabla);
+            if (!input || !tabla) return;
+
+            input.addEventListener("input", function () {
+                var texto = input.value.trim().toLowerCase();
+                var filas = tabla.querySelectorAll("tbody tr[data-filtro]");
+                filas.forEach(function (fila) {
+                    var filtro = fila.getAttribute("data-filtro") || "";
+                    fila.style.display = filtro.indexOf(texto) !== -1 ? "" : "none";
+                });
+            });
+        }
+
+        conectarFiltro("filtroHerramienta", "tablaHerramientas");
+        conectarFiltro("filtroMaterial", "tablaMateriales");
+    });
+</script>
+
+</body>
+</html>

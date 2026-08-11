@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h1 th:text="#{proyecto.titulo.listado}">
+        </h1>
+
+        <a th:href="@{/proyecto/nuevo}"
+           class="btn btn-primary"
+           th:text="#{proyecto.accion.agregar}">
+        </a>
+
+    </div>
+
+    <table class="table table-striped">
+
+        <thead>
+        <tr>
+            <th th:text="#{campo.nombre}"></th>
+            <th th:text="#{proyecto.campo.supervisor}"></th>
+            <th th:text="#{proyecto.campo.fechaInicio}"></th>
+            <th th:text="#{campo.estado}"></th>
+            <th th:text="#{campo.acciones}"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="proyecto : ${proyectos}">
+
+            <td th:text="${proyecto.nombre}"></td>
+
+            <td th:text="${proyecto.supervisor.nombre + ' ' + proyecto.supervisor.apellido}"></td>
+
+            <td th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM/yyyy')}"></td>
+
+            <td th:text="${proyecto.estado}"></td>
+
+            <td>
+
+                <a th:href="@{/proyecto/consultar/{idProyecto}
+                   (idProyecto=${proyecto.idProyecto})}"
+                   class="btn btn-info btn-sm"
+                   th:text="#{accion.consultar}">
+                </a>
+
+                <a th:href="@{/proyecto/modificar/{idProyecto}
+                   (idProyecto=${proyecto.idProyecto})}"
+                   class="btn btn-warning btn-sm"
+                   th:text="#{accion.modificar}">
+                </a>
+
+            </td>
+
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(proyectos)}">
+
+            <td colspan="5"
+                class="text-center"
+                th:text="#{proyecto.mensaje.sin-registros}">
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+</body>
+</html>

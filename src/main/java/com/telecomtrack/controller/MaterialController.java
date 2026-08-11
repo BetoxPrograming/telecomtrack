@@ -5,6 +5,7 @@ import com.telecomtrack.service.CategoriaService;
 import com.telecomtrack.service.MaterialService;
 import com.telecomtrack.service.MovimientoService;
 import com.telecomtrack.service.ProveedorService;
+import com.telecomtrack.service.UbicacionService;
 import jakarta.validation.Valid;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -24,17 +25,20 @@ public class MaterialController {
     private final MovimientoService movimientoService;
     private final CategoriaService categoriaService;
     private final ProveedorService proveedorService;
+    private final UbicacionService ubicacionService;
     private final MessageSource messageSource;
 
     public MaterialController(MaterialService materialService,
                                MovimientoService movimientoService,
                                CategoriaService categoriaService,
                                ProveedorService proveedorService,
+                               UbicacionService ubicacionService,
                                MessageSource messageSource) {
         this.materialService = materialService;
         this.movimientoService = movimientoService;
         this.categoriaService = categoriaService;
         this.proveedorService = proveedorService;
+        this.ubicacionService = ubicacionService;
         this.messageSource = messageSource;
     }
 
@@ -54,6 +58,7 @@ public class MaterialController {
         model.addAttribute("material", new Material());
         model.addAttribute("categorias", categoriaService.listarTodas());
         model.addAttribute("proveedores", proveedorService.listarTodos());
+        model.addAttribute("ubicaciones", ubicacionService.getUbicaciones());
         return "materiales/formulario";
     }
 
@@ -63,6 +68,7 @@ public class MaterialController {
             model.addAttribute("material", m);
             model.addAttribute("categorias", categoriaService.listarTodas());
             model.addAttribute("proveedores", proveedorService.listarTodos());
+            model.addAttribute("ubicaciones", ubicacionService.getUbicaciones());
             return "materiales/formulario";
         }).orElseGet(() -> {
             flash.addFlashAttribute("error", msg("mat.msg.noEncontrado"));
@@ -75,6 +81,7 @@ public class MaterialController {
                           BindingResult result,
                           @RequestParam(required = false) Long categoriaId,
                           @RequestParam(required = false) Long proveedorId,
+                          @RequestParam(required = false) Integer ubicacionId,
                           Model model, RedirectAttributes flash) {
 
         if (categoriaId != null) {
@@ -83,10 +90,14 @@ public class MaterialController {
         if (proveedorId != null) {
             proveedorService.buscarPorId(proveedorId).ifPresent(material::setProveedor);
         }
+        if (ubicacionId != null) {
+            ubicacionService.getUbicacion(ubicacionId).ifPresent(material::setUbicacion);
+        }
 
         if (result.hasErrors()) {
             model.addAttribute("categorias", categoriaService.listarTodas());
             model.addAttribute("proveedores", proveedorService.listarTodos());
+            model.addAttribute("ubicaciones", ubicacionService.getUbicaciones());
             return "materiales/formulario";
         }
 
@@ -100,6 +111,7 @@ public class MaterialController {
             result.rejectValue("codigoUnico", "error.material", msg("mat.msg.codigoDuplicado"));
             model.addAttribute("categorias", categoriaService.listarTodas());
             model.addAttribute("proveedores", proveedorService.listarTodos());
+            model.addAttribute("ubicaciones", ubicacionService.getUbicaciones());
             return "materiales/formulario";
         }
 
