@@ -3,6 +3,7 @@ package com.telecomtrack.controller;
 import com.telecomtrack.domain.Herramienta;
 import com.telecomtrack.service.HerramientaService;
 import com.telecomtrack.service.UbicacionService;
+import com.telecomtrack.service.UsuarioActualService;
 import jakarta.validation.Valid;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -23,13 +24,16 @@ public class HerramientaController {
 
     private final HerramientaService herramientaService;
     private final UbicacionService ubicacionService;
+    private final UsuarioActualService usuarioActualService;
     private final MessageSource messageSource;
 
     public HerramientaController(HerramientaService herramientaService,
                                   UbicacionService ubicacionService,
+                                  UsuarioActualService usuarioActualService,
                                   MessageSource messageSource) {
         this.herramientaService = herramientaService;
         this.ubicacionService = ubicacionService;
+        this.usuarioActualService = usuarioActualService;
         this.messageSource = messageSource;
     }
 
@@ -144,9 +148,16 @@ public class HerramientaController {
     @GetMapping("/baja/{idHerramienta}")
     public String bajaFormulario(
             @PathVariable Integer idHerramienta,
+            jakarta.servlet.http.HttpServletRequest request,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        var usuario = usuarioActualService.getUsuarioAutenticado(request);
+        if (usuario == null || !(usuarioActualService.esAdministrador(usuario) || usuarioActualService.esBodeguero(usuario))) {
+            agregarMensaje(redirectAttributes, "herramienta.error.permiso.denegado", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
         var herramienta = obtenerHerramientaActual(idHerramienta);
 
@@ -168,11 +179,18 @@ public class HerramientaController {
 
     @PostMapping("/baja")
     public String baja(
+            jakarta.servlet.http.HttpServletRequest request,
             @RequestParam Integer idHerramienta,
             @RequestParam(required = false) String justificacionBaja,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        var usuario = usuarioActualService.getUsuarioAutenticado(request);
+        if (usuario == null || !(usuarioActualService.esAdministrador(usuario) || usuarioActualService.esBodeguero(usuario))) {
+            agregarMensaje(redirectAttributes, "herramienta.error.permiso.denegado", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
         var herramienta = obtenerHerramientaActual(idHerramienta);
 
@@ -201,9 +219,16 @@ public class HerramientaController {
     @GetMapping("/mantenimiento/{idHerramienta}")
     public String mantenimientoFormulario(
             @PathVariable Integer idHerramienta,
+            jakarta.servlet.http.HttpServletRequest request,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        var usuario = usuarioActualService.getUsuarioAutenticado(request);
+        if (usuario == null || !(usuarioActualService.esAdministrador(usuario) || usuarioActualService.esBodeguero(usuario))) {
+            agregarMensaje(redirectAttributes, "herramienta.error.permiso.denegado", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
         var herramienta = obtenerHerramientaActual(idHerramienta);
 
@@ -224,11 +249,18 @@ public class HerramientaController {
 
     @PostMapping("/mantenimiento")
     public String mantenimiento(
+            jakarta.servlet.http.HttpServletRequest request,
             Herramienta herramienta,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        var usuario = usuarioActualService.getUsuarioAutenticado(request);
+        if (usuario == null || !(usuarioActualService.esAdministrador(usuario) || usuarioActualService.esBodeguero(usuario))) {
+            agregarMensaje(redirectAttributes, "herramienta.error.permiso.denegado", "danger", locale);
+            return "redirect:/herramienta/listado";
+        }
 
         var herramientaActual = obtenerHerramientaActual(herramienta.getIdHerramienta());
 

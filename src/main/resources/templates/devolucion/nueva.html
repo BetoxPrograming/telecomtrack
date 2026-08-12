@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <div th:replace="~{general/fragmentos :: toast}"></div>
+
+    <h1 class="mb-4" th:text="#{devolucion.titulo.nueva}"></h1>
+
+    <div class="alert alert-danger" th:if="${errorGeneral != null}" th:text="${errorGeneral}"></div>
+
+    <form th:action="@{/devolucion/guardar}" method="post" enctype="multipart/form-data" class="card shadow-sm">
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label" th:text="#{asignacion.titulo}"></label>
+                <select name="idAsignacion" class="form-select" required>
+                    <option value="" th:text="#{accion.seleccionar}"></option>
+                    <option th:each="asignacion : ${asignaciones}"
+                            th:value="${asignacion.idAsignacion}"
+                            th:text="${asignacion.herramienta.nombre + ' - ' + asignacion.proyecto.nombre + ' - ' + asignacion.fechaAsignacion}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" th:text="#{campo.estado}"></label>
+                <select name="estadoDevolucion" class="form-select" required>
+                    <option value="" th:text="#{accion.seleccionar}"></option>
+                    <option th:each="estado : ${estadosDevolucion}" th:value="${estado}" th:text="${estado}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" th:text="#{foto.titulo}"></label>
+                <input type="file" name="fotos" class="form-control" accept="image/png,image/jpeg" multiple>
+                <div class="form-text">JPG/PNG, máximo 3 archivos de 5 MB cada uno.</div>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+            <a class="btn btn-secondary" th:href="@{/devolucion/historial}" th:text="#{devolucion.accion.historial}"></a>
+            <button type="submit" class="btn btn-primary" th:text="#{devolucion.accion.registrar}"></button>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

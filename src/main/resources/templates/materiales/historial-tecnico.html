@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+    <h1 class="mb-4" th:text="#{historial.material.titulo}">Historial de materiales</h1>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(movimientos)}" class="text-center py-5 text-muted">
+                <span th:text="#{historial.material.vacio}">No hay movimientos registrados.</span>
+            </div>
+            <div class="table-responsive" th:if="${not #lists.isEmpty(movimientos)}">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary">
+                    <tr>
+                        <th th:text="#{historial.material.fecha}">Fecha</th>
+                        <th th:text="#{historial.material.material}">Material</th>
+                        <th th:text="#{historial.material.cantidad}">Cantidad</th>
+                        <th th:text="#{historial.material.tipo}">Tipo</th>
+                        <th th:text="#{historial.material.observacion}">Observación</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="mov : ${movimientos}">
+                        <td th:text="${#temporals.format(mov.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${mov.material.nombre}"></td>
+                        <td th:text="${mov.cantidad}"></td>
+                        <td th:text="${mov.tipo}"></td>
+                        <td th:text="${mov.observacion != null ? mov.observacion : '—'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

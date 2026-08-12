@@ -14,9 +14,18 @@ public interface AsignacionHerramientaRepository
     List<AsignacionHerramienta>
     findByActivaTrueOrderByFechaAsignacionDesc();
 
+    List<AsignacionHerramienta>
+    findByTecnicoIdUsuarioAndActivaTrueOrderByFechaAsignacionDesc(Integer idTecnico);
+
     Optional<AsignacionHerramienta>
     findByIdAsignacionAndActivaTrue(Integer idAsignacion);
 
     boolean existsByHerramientaIdHerramientaAndActivaTrue(
             Integer idHerramienta);
+
+    List<AsignacionHerramienta>
+    findByTecnicoIdUsuarioOrderByFechaAsignacionDesc(Integer idTecnico);
+
+    Optional<AsignacionHerramienta>
+    findTopByHerramientaIdHerramientaOrderByFechaAsignacionDesc(Integer idHerramienta);
 }

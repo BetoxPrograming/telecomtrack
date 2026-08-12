@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <h1 class="mb-4" th:text="#{devolucion.titulo.historial}"></h1>
+
+    <div th:replace="~{general/fragmentos :: toast}"></div>
+
+    <form class="row g-3 mb-4" method="get" th:action="@{/devolucion/historial}">
+        <div class="col-md-4">
+            <label class="form-label" th:text="#{asignacion.proyecto}"></label>
+            <select name="idProyecto" class="form-select">
+                <option value="" th:text="#{accion.todos}"></option>
+                <option th:each="proyecto : ${proyectos}"
+                        th:value="${proyecto.idProyecto}"
+                        th:text="${proyecto.nombre}"
+                        th:selected="${idProyecto != null and idProyecto == proyecto.idProyecto}"></option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" th:text="#{campo.fecha.inicio}"></label>
+            <input type="date" name="fechaInicio" class="form-control" th:value="${fechaInicio}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" th:text="#{campo.fecha.fin}"></label>
+            <input type="date" name="fechaFin" class="form-control" th:value="${fechaFin}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100" type="submit" th:text="#{accion.buscar}"></button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th th:text="#{campo.nombre}"></th>
+                <th th:text="#{asignacion.proyecto}"></th>
+                <th th:text="#{campo.fecha.asignacion}"></th>
+                <th th:text="#{campo.fecha.devolucion}"></th>
+                <th th:text="#{campo.estado}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="devolucion : ${devoluciones}">
+                <td th:text="${devolucion.asignacionHerramienta.herramienta.nombre}"></td>
+                <td th:text="${devolucion.asignacionHerramienta.proyecto.nombre}"></td>
+                <td th:text="${devolucion.asignacionHerramienta.fechaAsignacion}"></td>
+                <td th:text="${devolucion.fechaDevolucion}"></td>
+                <td th:text="${devolucion.estadoDevolucion}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(devoluciones)}">
+                <td colspan="5" class="text-center" th:text="#{devolucion.mensaje.sin-registros}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

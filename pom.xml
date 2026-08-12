@@ -199,6 +199,26 @@
             <artifactId>webjars-locator-lite</artifactId>
         </dependency>
 
+        <!--
+            ZXing Core.
+            Sirve para generar y leer códigos QR.
+        -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!--
+            ZXing JavaSE.
+            Complementa ZXing para renderizar el QR como imagen.
+        -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
     </dependencies>
 
     <!--

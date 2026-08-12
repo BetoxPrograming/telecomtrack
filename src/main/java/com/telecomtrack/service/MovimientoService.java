@@ -77,4 +77,14 @@ public class MovimientoService {
     public List<Movimiento> listarPorMaterial(Long idMaterial) {
         return movimientoRepository.findByMaterialIdMaterialOrderByFechaDesc(idMaterial);
     }
+
+    @Transactional(readOnly = true)
+    public List<Movimiento> getMovimientosPorResponsable(String responsable) {
+        return movimientoRepository.findByResponsableOrderByFechaDesc(responsable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Movimiento> getMovimientosSalidaPorResponsable(String responsable) {
+        return movimientoRepository.findByResponsableAndTipoOrderByFechaDesc(responsable, Movimiento.TIPO_SALIDA);
+    }
 }

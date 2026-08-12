@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <h1 class="mb-4" th:text="#{qr.titulo.ficha}"></h1>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <img class="img-fluid mb-3" th:src="@{/qr/herramienta/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}" alt="QR">
+                    <div class="small text-muted" th:text="${herramienta.codigo}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
+
+            <div class="card shadow-sm mb-3" th:if="${ultimaAsignacion != null}">
+                <div class="card-body">
+                    <h2 class="h5" th:text="#{asignacion.titulo}"></h2>
+                    <p class="mb-1"><strong th:text="#{asignacion.tecnico}"></strong>: <span th:text="${ultimaAsignacion.tecnico.nombre + ' ' + ultimaAsignacion.tecnico.apellido}"></span></p>
+                    <p class="mb-1"><strong th:text="#{asignacion.proyecto}"></strong>: <span th:text="${ultimaAsignacion.proyecto.nombre}"></span></p>
+                    <p class="mb-0"><strong th:text="#{campo.fecha.asignacion}"></strong>: <span th:text="${ultimaAsignacion.fechaAsignacion}"></span></p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5" th:text="#{qr.accion.ver}"></h2>
+                    <a class="btn btn-primary" th:href="@{/devolucion/nueva}" th:text="#{devolucion.accion.registrar}"></a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-3" th:text="#{devolucion.titulo.historial}"></h2>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th th:text="#{campo.fecha.devolucion}"></th>
+                                <th th:text="#{campo.estado}"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="devolucion : ${historialReciente}">
+                                <td th:text="${devolucion.fechaDevolucion}"></td>
+                                <td th:text="${devolucion.estadoDevolucion}"></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(historialReciente)}">
+                                <td colspan="2" class="text-center" th:text="#{devolucion.mensaje.sin-registros}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>
