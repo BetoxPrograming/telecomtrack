@@ -104,6 +104,18 @@
                                     </option>
                                 </select>
                             </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" th:text="#{campo.ubicacion}">Ubicacion</label>
+                                <select name="ubicacionId" class="form-select">
+                                    <option value="" th:text="#{ubicacion.seleccionar}">-- Seleccione una ubicacion --</option>
+                                    <option th:each="u : ${ubicaciones}"
+                                        th:value="${u.idUbicacion}"
+                                        th:text="${u.nombre}"
+                                        th:selected="${material.ubicacion != null and material.ubicacion.idUbicacion == u.idUbicacion}">
+                                    </option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">

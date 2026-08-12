@@ -15,6 +15,7 @@ public class HerramientaService {
     public static final String ESTADO_DISPONIBLE = "Disponible";
     public static final String ESTADO_MANTENIMIENTO = "Mantenimiento";
     public static final String ESTADO_BAJA = "Baja";
+    public static final String ESTADO_ASIGNADA = "Asignada";
 
     private final HerramientaRepository herramientaRepository;
 
@@ -30,6 +31,11 @@ public class HerramientaService {
     @Transactional(readOnly = true)
     public Optional<Herramienta> getHerramienta(Integer idHerramienta) {
         return herramientaRepository.findById(idHerramienta);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Herramienta> getHerramientasDisponibles(Integer idUbicacion, String texto) {
+        return herramientaRepository.buscarDisponibles(ESTADO_DISPONIBLE, idUbicacion, texto);
     }
 
     @Transactional(readOnly = true)

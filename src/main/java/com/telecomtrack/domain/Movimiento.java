@@ -14,6 +14,9 @@ public class Movimiento implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String TIPO_ENTRADA = "ENTRADA";
+    public static final String TIPO_SALIDA = "SALIDA";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_movimiento")
@@ -44,8 +47,7 @@ public class Movimiento implements Serializable {
     @JoinColumn(name = "id_material", nullable = false)
     private Material material;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_proveedor", nullable = false)
+    @JoinColumn(name = "id_proveedor")
     private Proveedor proveedor;
 }

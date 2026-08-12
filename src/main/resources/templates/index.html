@@ -55,6 +55,47 @@
             </div>
         </div>
 
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{proyecto.titulo.listado}"></h2>
+                    <p class="card-text text-muted" th:text="#{inicio.proyectos.descripcion}"></p>
+                    <a th:href="@{/proyecto/listado}"
+                       class="btn btn-primary mt-auto"
+                       th:text="#{accion.consultar}"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{solicitud.titulo.listado}"></h2>
+                    <p class="card-text text-muted" th:text="#{inicio.solicitudes.descripcion}"></p>
+                    <div class="mt-auto d-flex gap-2">
+                        <a th:href="@{/solicitud/nueva}"
+                           class="btn btn-primary"
+                           th:text="#{solicitud.accion.nueva}"></a>
+                        <a th:href="@{/solicitud/pendientes}"
+                           class="btn btn-outline-primary"
+                           th:text="#{solicitud.titulo.pendientes}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{listadoMaterialEstimado.titulo.listado}"></h2>
+                    <p class="card-text text-muted" th:text="#{inicio.listadoMaterialEstimado.descripcion}"></p>
+                    <a th:href="@{/listado-material-estimado/pendientes}"
+                       class="btn btn-primary mt-auto"
+                       th:text="#{listadoMaterialEstimado.titulo.pendientes}"></a>
+                </div>
+            </div>
+        </div>
+
     </section>
 
 </main>

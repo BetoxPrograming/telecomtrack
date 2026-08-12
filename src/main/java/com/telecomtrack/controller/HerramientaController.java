@@ -2,6 +2,7 @@ package com.telecomtrack.controller;
 
 import com.telecomtrack.domain.Herramienta;
 import com.telecomtrack.service.HerramientaService;
+import com.telecomtrack.service.UbicacionService;
 import jakarta.validation.Valid;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,14 @@ import java.util.Locale;
 public class HerramientaController {
 
     private final HerramientaService herramientaService;
+    private final UbicacionService ubicacionService;
     private final MessageSource messageSource;
 
-    public HerramientaController(HerramientaService herramientaService, MessageSource messageSource) {
+    public HerramientaController(HerramientaService herramientaService,
+                                  UbicacionService ubicacionService,
+                                  MessageSource messageSource) {
         this.herramientaService = herramientaService;
+        this.ubicacionService = ubicacionService;
         this.messageSource = messageSource;
     }
 
@@ -54,9 +59,12 @@ public class HerramientaController {
     public String guardar(
             @Valid Herramienta herramienta,
             BindingResult bindingResult,
+            @RequestParam(required = false) Integer ubicacionId,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
+
+        herramienta.setUbicacion(ubicacionId == null ? null : ubicacionService.getUbicacion(ubicacionId).orElse(null));
 
         var herramientaActual = obtenerHerramientaActual(herramienta.getIdHerramienta());
 
@@ -282,6 +290,7 @@ public class HerramientaController {
     private void cargarFormulario(Model model, Herramienta herramienta) {
         model.addAttribute("herramienta", herramienta);
         model.addAttribute("idiomaRuta", getRutaFormulario(herramienta));
+        model.addAttribute("ubicaciones", ubicacionService.getUbicaciones());
     }
 
     private String getRutaFormulario(Herramienta herramienta) {

@@ -40,13 +40,35 @@ public class MovimientoService {
         materialRepository.save(material);
 
         Movimiento movimiento = new Movimiento();
-        movimiento.setTipo("ENTRADA");
+        movimiento.setTipo(Movimiento.TIPO_ENTRADA);
         movimiento.setCantidad(cantidad);
         movimiento.setFecha(LocalDateTime.now());
         movimiento.setObservacion(observacion);
         movimiento.setResponsable(responsable);
         movimiento.setMaterial(material);
         movimiento.setProveedor(proveedor);
+
+        return movimientoRepository.save(movimiento);
+    }
+
+    public Movimiento registrarSalida(Material material, Integer cantidad,
+                                       String observacion, String responsable) {
+
+        if (cantidad == null || cantidad < 1 || material.getStockActual() < cantidad) {
+            throw new IllegalStateException("solicitud.error.stockInsuficiente");
+        }
+
+        material.setStockActual(material.getStockActual() - cantidad);
+        materialRepository.save(material);
+
+        Movimiento movimiento = new Movimiento();
+        movimiento.setTipo(Movimiento.TIPO_SALIDA);
+        movimiento.setCantidad(cantidad);
+        movimiento.setFecha(LocalDateTime.now());
+        movimiento.setObservacion(observacion);
+        movimiento.setResponsable(responsable);
+        movimiento.setMaterial(material);
+        movimiento.setProveedor(null);
 
         return movimientoRepository.save(movimiento);
     }

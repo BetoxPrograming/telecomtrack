@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <h2 class="fw-bold mb-4">
+        <i class="fa-solid fa-clipboard-list text-primary me-2"></i>
+        <span th:text="#{solicitud.titulo.detalle}">Detalle de solicitud</span>
+    </h2>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <strong th:text="#{asignacion.tecnico}">Tecnico</strong>:
+                    <span th:text="${solicitud.tecnico.nombre + ' ' + solicitud.tecnico.apellido}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong th:text="#{asignacion.proyecto}">Proyecto</strong>:
+                    <span th:text="${solicitud.proyecto.nombre}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong th:text="#{campo.ubicacion}">Bodega</strong>:
+                    <span th:text="${solicitud.ubicacion.nombre}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong th:text="#{solicitud.campo.fecha}">Fecha</strong>:
+                    <span th:text="${#temporals.format(solicitud.fechaSolicitud, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong th:text="#{campo.estado}">Estado</strong>:
+                    <span th:switch="${solicitud.estado}">
+                        <span th:case="'PENDIENTE'" class="badge bg-warning text-dark" th:text="#{solicitud.estado.pendiente}"></span>
+                        <span th:case="'APROBADA'" class="badge bg-success" th:text="#{solicitud.estado.aprobada}"></span>
+                        <span th:case="'RECHAZADA'" class="badge bg-danger" th:text="#{solicitud.estado.rechazada}"></span>
+                    </span>
+                </div>
+                <div class="col-md-4" th:if="${solicitud.usuarioDecision != null}">
+                    <strong th:text="#{solicitud.campo.usuarioDecision}">Decidido por</strong>:
+                    <span th:text="${solicitud.usuarioDecision.nombre + ' ' + solicitud.usuarioDecision.apellido}"></span>
+                    <span th:text="${'(' + #temporals.format(solicitud.fechaDecision, 'dd/MM/yyyy HH:mm') + ')'}"></span>
+                </div>
+                <div class="col-12" th:if="${solicitud.motivoRechazo != null}">
+                    <strong th:text="#{solicitud.campo.motivoRechazo}">Motivo de rechazo</strong>:
+                    <span th:text="${solicitud.motivoRechazo}"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white" th:text="#{solicitud.campo.detalles}">Articulos solicitados</div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th th:text="#{campo.nombre}">Articulo</th>
+                    <th th:text="#{solicitud.campo.tipo}">Tipo</th>
+                    <th th:text="#{solicitud.campo.cantidad}">Cantidad</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${solicitud.detalles}">
+                    <td th:text="${d.herramienta != null ? d.herramienta.nombre : d.material.nombre}"></td>
+                    <td th:text="${d.herramienta != null ? #{herramienta.titulo.listado} : #{mat.titulo}}"></td>
+                    <td th:text="${d.herramienta != null ? '-' : d.cantidad}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/solicitud/mis-solicitudes}" class="btn btn-secondary" th:text="#{accion.regresar}">Regresar</a>
+    </div>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>
