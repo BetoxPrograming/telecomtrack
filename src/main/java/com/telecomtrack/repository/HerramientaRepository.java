@@ -14,6 +14,8 @@ public interface HerramientaRepository extends JpaRepository<Herramienta, Intege
 
     Optional<Herramienta> findByCodigo(String codigo);
 
+    long countByEstado(String estado);
+
     @Query("SELECT h FROM Herramienta h WHERE h.estado = :estado "
             + "AND (:idUbicacion IS NULL OR h.ubicacion.idUbicacion = :idUbicacion) "
             + "AND (:texto IS NULL OR :texto = '' "

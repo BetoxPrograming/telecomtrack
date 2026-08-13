@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>
+            <span th:text="#{reporte.inventario.titulo}">General inventory report</span>
+        </h2>
+        <a th:href="@{/reportes}" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left me-1"></i>
+            <span th:text="#{accion.regresar}">Back</span>
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get" th:action="@{/reportes/inventario}" class="row g-3 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold" th:text="#{reporte.filtro.tipo}">Type</label>
+                    <select name="tipo" class="form-select">
+                        <option value="" th:text="#{reporte.filtro.todos}">-- All --</option>
+                        <option value="HERRAMIENTA" th:selected="${tipo == 'HERRAMIENTA'}" th:text="#{reporte.inventario.tipo.herramienta}">Tool</option>
+                        <option value="MATERIAL" th:selected="${tipo == 'MATERIAL'}" th:text="#{reporte.inventario.tipo.material}">Material</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold" th:text="#{reporte.filtro.categoria}">Category</label>
+                    <input type="text" name="categoria" class="form-control" th:value="${categoria}"/>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold" th:text="#{reporte.filtro.estado}">Status</label>
+                    <input type="text" name="estado" class="form-control" th:value="${estado}"/>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold" th:text="#{reporte.filtro.ubicacion}">Location</label>
+                    <select name="ubicacion" class="form-select">
+                        <option value="" th:text="#{reporte.filtro.todos}">-- All --</option>
+                        <option th:each="u : ${ubicaciones}"
+                                th:value="${u.nombre}"
+                                th:text="${u.nombre}"
+                                th:selected="${ubicacion == u.nombre}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold" th:text="#{reporte.filtro.fechaDesde}">From</label>
+                    <input type="date" name="desde" class="form-control" th:value="${desde}"/>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold" th:text="#{reporte.filtro.fechaHasta}">To</label>
+                    <input type="date" name="hasta" class="form-control" th:value="${hasta}"/>
+                </div>
+                <div class="col-12 d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-filter me-1"></i>
+                        <span th:text="#{reporte.filtro.aplicar}">Apply filters</span>
+                    </button>
+                    <a class="btn btn-outline-success"
+                       th:href="@{/reportes/inventario/exportar/excel(tipo=${tipo},categoria=${categoria},estado=${estado},ubicacion=${ubicacion},desde=${desde},hasta=${hasta})}">
+                        <i class="fa-solid fa-file-excel me-1"></i>
+                        <span th:text="#{reporte.accion.exportarExcel}">Export to Excel</span>
+                    </a>
+                    <a class="btn btn-outline-danger"
+                       th:href="@{/reportes/inventario/exportar/pdf(tipo=${tipo},categoria=${categoria},estado=${estado},ubicacion=${ubicacion},desde=${desde},hasta=${hasta})}">
+                        <i class="fa-solid fa-file-pdf me-1"></i>
+                        <span th:text="#{reporte.accion.exportarPdf}">Export to PDF</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(filas)}" class="text-center py-5 text-muted">
+                <span th:text="#{reporte.inventario.vacio}">No items match the selected filters.</span>
+            </div>
+            <div class="table-responsive" th:if="${not #lists.isEmpty(filas)}">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary">
+                    <tr>
+                        <th th:text="#{reporte.inventario.col.tipo}">Type</th>
+                        <th th:text="#{reporte.inventario.col.codigo}">Code</th>
+                        <th th:text="#{reporte.inventario.col.nombre}">Name</th>
+                        <th th:text="#{reporte.inventario.col.categoria}">Category</th>
+                        <th th:text="#{reporte.inventario.col.estado}">Status</th>
+                        <th th:text="#{reporte.inventario.col.ubicacion}">Location</th>
+                        <th class="text-center" th:text="#{reporte.inventario.col.cantidad}">Quantity</th>
+                        <th class="text-end" th:text="#{reporte.inventario.col.valorUnitario}">Unit value</th>
+                        <th class="text-end" th:text="#{reporte.inventario.col.valorTotal}">Total value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="fila : ${filas}">
+                        <td th:text="${fila.tipoElemento == 'HERRAMIENTA'} ? #{reporte.inventario.tipo.herramienta} : #{reporte.inventario.tipo.material}"></td>
+                        <td><code th:text="${fila.codigo}"></code></td>
+                        <td th:text="${fila.nombre}"></td>
+                        <td th:text="${fila.categoria != null ? fila.categoria : '—'}"></td>
+                        <td th:text="${fila.estado}"></td>
+                        <td th:text="${fila.ubicacion != null ? fila.ubicacion : '—'}"></td>
+                        <td class="text-center" th:text="${fila.cantidad}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(fila.valorUnitario, 1, 2)}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(fila.valorTotal, 1, 2)}"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot th:if="${not #lists.isEmpty(filas)}">
+                    <tr class="table-light fw-bold">
+                        <td colspan="8" class="text-end" th:text="#{reporte.inventario.totalGeneral}">Grand total</td>
+                        <td class="text-end"
+                            th:with="total=${#aggregates.sum(filas.![valorTotal])}"
+                            th:text="${#numbers.formatDecimal(total, 1, 2)}"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

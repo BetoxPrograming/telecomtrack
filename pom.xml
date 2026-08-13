@@ -199,6 +199,28 @@
             <artifactId>webjars-locator-lite</artifactId>
         </dependency>
 
+        <!--
+            Apache POI (OOXML).
+            Sirve para generar archivos Excel (.xlsx).
+            Se usa en los reportes finales para exportar tablas a Excel.
+        -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+
+        <!--
+            OpenPDF.
+            Sirve para generar archivos PDF.
+            Se usa en los reportes finales para exportar tablas a PDF.
+        -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
     </dependencies>
 
     <!--

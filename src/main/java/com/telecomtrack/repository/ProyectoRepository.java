@@ -12,4 +12,8 @@ public interface ProyectoRepository extends JpaRepository<Proyecto, Integer> {
     List<Proyecto> findAllByOrderByNombreAsc();
 
     List<Proyecto> findByEstadoOrderByNombreAsc(String estado);
+
+    long countByEstado(String estado);
+
+    List<Proyecto> findBySupervisorIdUsuarioOrderByNombreAsc(Integer idSupervisor);
 }
