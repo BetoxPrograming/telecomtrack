@@ -1,6 +1,8 @@
 package com.telecomtrack.service;
 
+import com.telecomtrack.domain.Rol;
 import com.telecomtrack.domain.Usuario;
+import com.telecomtrack.repository.RolRepository;
 import com.telecomtrack.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +18,13 @@ public class UsuarioService {
     private static final String ROL_BODEGUERO = "Bodeguero";
 
     private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            RolRepository rolRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.rolRepository = rolRepository;
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +61,21 @@ public class UsuarioService {
 
     @Transactional
     public void save(Usuario usuario) {
+        sincronizarRol(usuario);
         usuarioRepository.save(usuario);
+    }
+
+    private void sincronizarRol(Usuario usuario) {
+        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
+            return;
+        }
+
+        Optional<Rol> rol = rolRepository.findByRol(usuario.getRol());
+
+        if (rol.isPresent()) {
+            usuario.getRoles().clear();
+            usuario.getRoles().add(rol.get());
+        }
     }
 
     @Transactional
