@@ -1,3 +1,0 @@
--- Script obsoleto conservado únicamente para neutralizar la versión antigua
--- de la rama feature/returns-traceability-qr.
--- La tabla de fotografías se crea en 15_create_foto_devolucion_herramienta.sql.
