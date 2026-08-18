@@ -19,13 +19,16 @@ public class MovimientoService {
     private final MovimientoRepository movimientoRepository;
     private final MaterialRepository materialRepository;
     private final ProveedorRepository proveedorRepository;
+    private final NotificacionCorreoService notificacionCorreoService;
 
     public MovimientoService(MovimientoRepository movimientoRepository,
                               MaterialRepository materialRepository,
-                              ProveedorRepository proveedorRepository) {
+                              ProveedorRepository proveedorRepository,
+                              NotificacionCorreoService notificacionCorreoService) {
         this.movimientoRepository = movimientoRepository;
         this.materialRepository = materialRepository;
         this.proveedorRepository = proveedorRepository;
+        this.notificacionCorreoService = notificacionCorreoService;
     }
 
     public Movimiento registrarEntrada(Long idMaterial, Integer cantidad,
@@ -70,7 +73,9 @@ public class MovimientoService {
         movimiento.setMaterial(material);
         movimiento.setProveedor(null);
 
-        return movimientoRepository.save(movimiento);
+        Movimiento movimientoGuardado = movimientoRepository.save(movimiento);
+        notificacionCorreoService.notificarStockMinimo(material);
+        return movimientoGuardado;
     }
 
     @Transactional(readOnly = true)
