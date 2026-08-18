@@ -27,7 +27,8 @@ public class UsuarioController {
                 "{rol.administrador}",
                 "{rol.bodeguero}",
                 "{rol.tecnico}",
-                "{rol.supervisor}"
+                "{rol.supervisor}",
+                "{rol.visitante}"
         };
 
         model.addAttribute("roles", roles);

@@ -21,6 +21,13 @@
             </a>
 
             <a sec:authorize="hasRole('Bodeguero')"
+               th:href="@{/inventario/importar}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-file-import"></i>
+                <span th:text="#{importacion.accion.menu}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Bodeguero')"
                th:href="@{/dashboard}"
                class="btn btn-outline-light btn-sm">
                 <span th:text="#{dashboard.titulo}"></span>
