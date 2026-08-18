@@ -250,6 +250,34 @@
             <version>2.2.2</version>
         </dependency>
 
+        <!--
+            ZXing.
+            Se utiliza para generar el código QR único de cada herramienta.
+            Esta funcionalidad corresponde a la investigación adicional del equipo.
+        -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!--
+            Firebase Admin.
+            Se usa para almacenar las fotografías de devoluciones en Firebase Storage,
+            siguiendo el mecanismo trabajado en la semana 4 del curso.
+        -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.9.0</version>
+        </dependency>
+
     </dependencies>
 
     <!--

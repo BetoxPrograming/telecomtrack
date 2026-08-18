@@ -52,6 +52,7 @@
                 </td>
                 <td>
                     <a th:href="@{/herramienta/consultar/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}" class="btn btn-info btn-sm" th:text="#{accion.consultar}"></a>
+                    <a th:href="@{/qr/herramienta/{idHerramienta}/ficha(idHerramienta=${herramienta.idHerramienta})}" class="btn btn-outline-primary btn-sm" th:text="#{qr.accion.ver}"></a>
                     <a th:href="@{/herramienta/modificar/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}" class="btn btn-warning btn-sm" th:text="#{accion.modificar}"></a>
                     <a th:if="${herramienta.estado != 'Baja'}" th:href="@{/herramienta/baja/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}" class="btn btn-danger btn-sm" th:text="#{herramienta.accion.baja}"></a>
                     <a th:if="${herramienta.estado == 'Disponible'}" th:href="@{/herramienta/mantenimiento/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}" class="btn btn-secondary btn-sm" th:text="#{herramienta.accion.mantenimiento}"></a>

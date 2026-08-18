@@ -20,6 +20,27 @@
                 <span th:text="#{herramienta.titulo.catalogo}"></span>
             </a>
 
+            <a sec:authorize="hasRole('Técnico')"
+               th:href="@{/devolucion/nueva}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span th:text="#{devolucion.accion.registrar}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Técnico')"
+               th:href="@{/devolucion/historial}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span th:text="#{devolucion.accion.historial}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Técnico')"
+               th:href="@{/historial-material}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span th:text="#{historial.material.accion}"></span>
+            </a>
+
             <a sec:authorize="hasRole('Administrador')"
                th:href="@{/notificacion/configuracion}"
                class="btn btn-outline-light btn-sm">

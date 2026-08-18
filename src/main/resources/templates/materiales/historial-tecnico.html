@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-4">
+        <div>
+            <h1 class="mb-1" th:text="#{historial.material.titulo}"></h1>
+            <p class="text-muted mb-0" th:text="#{historial.material.descripcion}"></p>
+        </div>
+        <a th:href="@{/devolucion/historial}"
+           class="btn btn-outline-primary"
+           th:text="#{devolucion.accion.historial}"></a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(movimientos)}" class="text-center py-5 text-muted">
+                <span th:text="#{historial.material.vacio}"></span>
+            </div>
+
+            <div class="table-responsive" th:if="${not #lists.isEmpty(movimientos)}">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary">
+                    <tr>
+                        <th th:text="#{historial.material.fecha}"></th>
+                        <th th:text="#{historial.material.material}"></th>
+                        <th th:text="#{historial.material.cantidad}"></th>
+                        <th th:text="#{historial.material.tipo}"></th>
+                        <th th:text="#{historial.material.observacion}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="mov : ${movimientos}">
+                        <td th:text="${#temporals.format(mov.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${mov.material.nombre}"></td>
+                        <td th:text="${mov.cantidad}"></td>
+                        <td th:text="#{historial.material.salida}"></td>
+                        <td th:text="${mov.observacion != null ? mov.observacion : '-'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

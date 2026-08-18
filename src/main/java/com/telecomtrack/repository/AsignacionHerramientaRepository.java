@@ -20,6 +20,9 @@ public interface AsignacionHerramientaRepository
     findByActivaTrueAndProyectoSupervisorIdUsuarioOrderByFechaAsignacionDesc(Integer idSupervisor);
 
     List<AsignacionHerramienta>
+    findByTecnicoIdUsuarioAndActivaTrueOrderByFechaAsignacionDesc(Integer idTecnico);
+
+    List<AsignacionHerramienta>
     findByTecnicoIdUsuarioOrderByFechaAsignacionDesc(Integer idTecnico);
 
     List<AsignacionHerramienta>
@@ -30,4 +33,7 @@ public interface AsignacionHerramientaRepository
 
     boolean existsByHerramientaIdHerramientaAndActivaTrue(
             Integer idHerramienta);
+
+    Optional<AsignacionHerramienta>
+    findTopByHerramientaIdHerramientaOrderByFechaAsignacionDesc(Integer idHerramienta);
 }

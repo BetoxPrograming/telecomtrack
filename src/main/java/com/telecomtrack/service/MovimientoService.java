@@ -3,6 +3,7 @@ package com.telecomtrack.service;
 import com.telecomtrack.domain.Material;
 import com.telecomtrack.domain.Movimiento;
 import com.telecomtrack.domain.Proveedor;
+import com.telecomtrack.domain.Usuario;
 import com.telecomtrack.repository.MaterialRepository;
 import com.telecomtrack.repository.MovimientoRepository;
 import com.telecomtrack.repository.ProveedorRepository;
@@ -55,7 +56,8 @@ public class MovimientoService {
     }
 
     public Movimiento registrarSalida(Material material, Integer cantidad,
-                                       String observacion, String responsable) {
+                                       String observacion, String responsable,
+                                       Usuario tecnico) {
 
         if (cantidad == null || cantidad < 1 || material.getStockActual() < cantidad) {
             throw new IllegalStateException("solicitud.error.stockInsuficiente");
@@ -71,6 +73,7 @@ public class MovimientoService {
         movimiento.setObservacion(observacion);
         movimiento.setResponsable(responsable);
         movimiento.setMaterial(material);
+        movimiento.setTecnico(tecnico);
         movimiento.setProveedor(null);
 
         Movimiento movimientoGuardado = movimientoRepository.save(movimiento);
@@ -81,5 +84,13 @@ public class MovimientoService {
     @Transactional(readOnly = true)
     public List<Movimiento> listarPorMaterial(Long idMaterial) {
         return movimientoRepository.findByMaterialIdMaterialOrderByFechaDesc(idMaterial);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Movimiento> getSalidasPorTecnico(Integer idTecnico) {
+        return movimientoRepository
+                .findByTecnicoIdUsuarioAndTipoOrderByFechaDesc(
+                        idTecnico,
+                        Movimiento.TIPO_SALIDA);
     }
 }

@@ -12,7 +12,12 @@
 
     <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
 
-    <a th:href="@{/herramienta/listado}" class="btn btn-secondary" th:text="#{accion.regresar}"></a>
+    <div class="d-flex gap-2 flex-wrap">
+        <a th:href="@{/qr/herramienta/{idHerramienta}/ficha(idHerramienta=${herramienta.idHerramienta})}"
+           class="btn btn-primary"
+           th:text="#{qr.accion.ver}"></a>
+        <a th:href="@{/herramienta/listado}" class="btn btn-secondary" th:text="#{accion.regresar}"></a>
+    </div>
 </main>
 
 <footer th:replace="~{general/fragmentos :: footer}"></footer>

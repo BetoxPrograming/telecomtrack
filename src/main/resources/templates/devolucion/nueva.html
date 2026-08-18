@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<main class="container py-5">
+    <div th:replace="~{general/fragmentos :: toast}"></div>
+
+    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-4">
+        <div>
+            <h1 class="mb-1" th:text="#{devolucion.titulo.nueva}"></h1>
+            <p class="text-muted mb-0" th:text="#{devolucion.descripcion.nueva}"></p>
+        </div>
+        <a class="btn btn-outline-secondary"
+           th:href="@{/devolucion/historial}"
+           th:text="#{devolucion.accion.historial}"></a>
+    </div>
+
+    <div class="alert alert-danger"
+         th:if="${errorGeneral != null}"
+         th:text="${errorGeneral}"></div>
+
+    <div class="alert alert-info" th:if="${#lists.isEmpty(asignaciones)}">
+        <span th:text="#{devolucion.mensaje.sin-asignaciones}"></span>
+    </div>
+
+    <form th:if="${not #lists.isEmpty(asignaciones)}"
+          th:action="@{/devolucion/guardar}"
+          method="post"
+          enctype="multipart/form-data"
+          class="card shadow-sm">
+
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label" for="idAsignacion" th:text="#{devolucion.campo.asignacion}"></label>
+                <select id="idAsignacion" name="idAsignacion" class="form-select" required>
+                    <option value="" th:text="#{accion.seleccionar}"></option>
+                    <option th:each="asignacion : ${asignaciones}"
+                            th:value="${asignacion.idAsignacion}"
+                            th:text="${asignacion.herramienta.nombre + ' - ' + asignacion.proyecto.nombre + ' - ' + asignacion.fechaAsignacion}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="estadoDevolucion" th:text="#{campo.estado}"></label>
+                <select id="estadoDevolucion" name="estadoDevolucion" class="form-select" required>
+                    <option value="" th:text="#{accion.seleccionar}"></option>
+                    <option value="Buena" th:text="#{devolucion.estado.buena}"></option>
+                    <option value="Dañada" th:text="#{devolucion.estado.danada}"></option>
+                    <option value="Perdida" th:text="#{devolucion.estado.perdida}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3 d-none" id="bloqueFechaRetorno">
+                <label class="form-label" for="fechaRetornoEstimada" th:text="#{campo.fecha.retorno.estimada}"></label>
+                <input type="date"
+                       id="fechaRetornoEstimada"
+                       name="fechaRetornoEstimada"
+                       class="form-control">
+                <div class="form-text" th:text="#{devolucion.fechaRetorno.ayuda}"></div>
+            </div>
+
+            <div class="mb-3 d-none" id="bloqueJustificacion">
+                <label class="form-label" for="justificacionBaja" th:text="#{campo.justificacion.baja}"></label>
+                <textarea id="justificacionBaja"
+                          name="justificacionBaja"
+                          class="form-control"
+                          rows="3"
+                          maxlength="255"></textarea>
+                <div class="form-text" th:text="#{devolucion.justificacion.ayuda}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="fotos" th:text="#{foto.titulo}"></label>
+                <input type="file"
+                       id="fotos"
+                       name="fotos"
+                       class="form-control"
+                       accept="image/png,image/jpeg"
+                       multiple>
+                <div class="form-text" th:text="#{devolucion.foto.ayuda}"></div>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+            <a class="btn btn-secondary"
+               th:href="@{/}"
+               th:text="#{accion.cancelar}"></a>
+            <button type="submit"
+                    class="btn btn-primary"
+                    th:text="#{devolucion.accion.registrar}"></button>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+
+<script>
+    const estado = document.getElementById('estadoDevolucion');
+    const bloqueFecha = document.getElementById('bloqueFechaRetorno');
+    const fecha = document.getElementById('fechaRetornoEstimada');
+    const bloqueJustificacion = document.getElementById('bloqueJustificacion');
+    const justificacion = document.getElementById('justificacionBaja');
+
+    function actualizarCampos() {
+        const danada = estado && estado.value === 'Dañada';
+        const perdida = estado && estado.value === 'Perdida';
+
+        bloqueFecha.classList.toggle('d-none', !danada);
+        bloqueJustificacion.classList.toggle('d-none', !perdida);
+
+        fecha.required = danada;
+        justificacion.required = perdida;
+
+        if (!danada) fecha.value = '';
+        if (!perdida) justificacion.value = '';
+    }
+
+    if (estado) {
+        estado.addEventListener('change', actualizarCampos);
+        actualizarCampos();
+    }
+</script>
+</body>
+</html>

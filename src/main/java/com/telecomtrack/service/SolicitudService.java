@@ -172,7 +172,8 @@ public class SolicitudService {
                         detalle.getMaterial(),
                         detalle.getCantidad(),
                         observacion,
-                        bodeguero.getNombre() + " " + bodeguero.getApellido());
+                        bodeguero.getNombre() + " " + bodeguero.getApellido(),
+                        solicitud.getTecnico());
 
             } else if (detalle.getHerramienta() != null) {
 
