@@ -18,6 +18,6 @@ public class RutaService {
 
     @Transactional(readOnly = true)
     public List<Ruta> getRutas() {
-        return rutaRepository.findAll();
+        return rutaRepository.findAllByOrderByIdRutaAsc();
     }
 }

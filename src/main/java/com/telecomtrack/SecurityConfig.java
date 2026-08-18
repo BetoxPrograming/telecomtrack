@@ -1,5 +1,7 @@
 package com.telecomtrack;
 
+import com.telecomtrack.domain.Ruta;
+import com.telecomtrack.service.RutaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,27 +16,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    /*
-     * En esta tarea se activa la autenticación.
-     * La autorización específica por rutas y roles se incorpora
-     * en el siguiente commit del Issue 14.
-     */
+    // Este método genera el proceso de autorización usando las rutas almacenadas en BD.
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            @Lazy RutaService rutaService)
             throws Exception {
 
-        http.authorizeHttpRequests(requests -> requests
-                .requestMatchers(
-                        "/login",
-                        "/acceso_denegado",
-                        "/error",
-                        "/herramienta/catalogo",
-                        "/webjars/**",
-                        "/js/**",
-                        "/css/**"
-                ).permitAll()
-                .anyRequest().authenticated()
-        );
+        var rutas = rutaService.getRutas();
+
+        http.authorizeHttpRequests(requests -> {
+            for (Ruta ruta : rutas) {
+                if (ruta.isRequiereRol()) {
+                    requests.requestMatchers(ruta.getRuta())
+                            .hasRole(ruta.getRol().getRol());
+                } else {
+                    requests.requestMatchers(ruta.getRuta()).permitAll();
+                }
+            }
+
+            requests.anyRequest().authenticated();
+        });
 
         http.formLogin(form -> form
                 .loginPage("/login")

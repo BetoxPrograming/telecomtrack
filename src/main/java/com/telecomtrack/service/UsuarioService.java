@@ -99,12 +99,20 @@ public class UsuarioService {
             return;
         }
 
-        Optional<Rol> rol = rolRepository.findByRol(usuario.getRol());
+        usuario.getRoles().clear();
 
-        if (rol.isPresent()) {
-            usuario.getRoles().clear();
-            usuario.getRoles().add(rol.get());
+        /*
+         * El Administrador recibe todos los roles para conservar el patrón
+         * trabajado en Tienda: un mismo usuario puede poseer varios roles.
+         * Así puede acceder a todos los módulos sin crear una jerarquía nueva.
+         */
+        if ("Administrador".equals(usuario.getRol())) {
+            usuario.getRoles().addAll(rolRepository.findAll());
+            return;
         }
+
+        Optional<Rol> rol = rolRepository.findByRol(usuario.getRol());
+        rol.ifPresent(value -> usuario.getRoles().add(value));
     }
 
     @Transactional
