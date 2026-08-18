@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head">
     <meta charset="UTF-8">
@@ -22,17 +23,43 @@
             <span th:text="#{dashboard.titulo}"></span>
         </a>
 
-        <div class="dropdown" th:with="rutaIdioma=${idiomaRuta != null ? idiomaRuta : '/'}">
-            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Idioma
-            </button>
+        <div class="d-flex align-items-center gap-2">
 
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=es'">Español</a></li>
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=en'">English</a></li>
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=ja'">日本語</a></li>
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=zh'">中文</a></li>
-            </ul>
+            <div class="dropdown" th:with="rutaIdioma=${idiomaRuta != null ? idiomaRuta : '/'}">
+                <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Idioma
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=es'">Español</a></li>
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=en'">English</a></li>
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=ja'">日本語</a></li>
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=zh'">中文</a></li>
+                </ul>
+            </div>
+
+            <a sec:authorize="isAnonymous()"
+               th:href="@{/login}"
+               class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span th:text="#{seguridad.accion.ingresar}"></span>
+            </a>
+
+            <div sec:authorize="isAuthenticated()"
+                 class="d-flex align-items-center gap-2">
+
+                <span class="small"
+                      sec:authentication="name"></span>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit"
+                            class="btn btn-outline-light btn-sm">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span th:text="#{seguridad.accion.salir}"></span>
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
 </header>

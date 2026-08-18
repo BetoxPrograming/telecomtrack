@@ -4,6 +4,7 @@ import com.telecomtrack.domain.Rol;
 import com.telecomtrack.domain.Usuario;
 import com.telecomtrack.repository.RolRepository;
 import com.telecomtrack.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +20,15 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UsuarioService(
             UsuarioRepository usuarioRepository,
-            RolRepository rolRepository) {
+            RolRepository rolRepository,
+            PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +65,31 @@ public class UsuarioService {
 
     @Transactional
     public void save(Usuario usuario) {
+
+        if (usuario.getIdUsuario() == null) {
+
+            if (usuario.getPassword() == null || usuario.getPassword().isBlank()) {
+                throw new IllegalArgumentException(
+                        "La contraseña es obligatoria para usuarios nuevos.");
+            }
+
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+        } else {
+
+            Usuario usuarioExistente = usuarioRepository
+                    .findById(usuario.getIdUsuario())
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("El usuario no existe")
+                    );
+
+            if (usuario.getPassword() == null || usuario.getPassword().isBlank()) {
+                usuario.setPassword(usuarioExistente.getPassword());
+            } else {
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            }
+        }
+
         sincronizarRol(usuario);
         usuarioRepository.save(usuario);
     }

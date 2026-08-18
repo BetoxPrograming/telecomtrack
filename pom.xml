@@ -200,6 +200,25 @@
         </dependency>
 
         <!--
+            Spring Security.
+            Se utiliza para la autenticación contra la base de datos,
+            el inicio y cierre de sesión y el cifrado de contraseñas.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!--
+            Integración de Spring Security con Thymeleaf.
+            Permite consultar el estado de autenticación desde las vistas.
+        -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
+        <!--
             Apache POI (OOXML).
             Sirve para generar archivos Excel (.xlsx).
             Se usa en los reportes finales para exportar tablas a Excel.
