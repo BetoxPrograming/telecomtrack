@@ -18,6 +18,10 @@
             <span th:text="#{herramienta.titulo.catalogo}"></span>
         </a>
 
+        <a th:href="@{/dashboard}" class="btn btn-outline-light btn-sm">
+            <span th:text="#{dashboard.titulo}"></span>
+        </a>
+
         <div class="dropdown" th:with="rutaIdioma=${idiomaRuta != null ? idiomaRuta : '/'}">
             <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Idioma

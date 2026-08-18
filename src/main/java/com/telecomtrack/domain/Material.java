@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -46,6 +47,11 @@ public class Material implements Serializable {
     @Column(name = "stock_minimo", nullable = false)
     private Integer stockMinimo;
 
+    @NotNull(message = "{validacion.material.valorUnitario.requerido}")
+    @DecimalMin(value = "0.0", message = "{validacion.material.valorUnitario.negativo}")
+    @Column(name = "valor_unitario", nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorUnitario = BigDecimal.ZERO;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;
@@ -60,5 +66,12 @@ public class Material implements Serializable {
 
     public boolean isStockBajo() {
         return stockActual != null && stockMinimo != null && stockActual <= stockMinimo;
+    }
+
+    public BigDecimal getValorTotal() {
+        if (valorUnitario == null || stockActual == null) {
+            return BigDecimal.ZERO;
+        }
+        return valorUnitario.multiply(BigDecimal.valueOf(stockActual));
     }
 }
