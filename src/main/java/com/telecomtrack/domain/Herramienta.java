@@ -9,12 +9,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -47,6 +50,11 @@ public class Herramienta implements Serializable {
     @Size(max = 255, message = "{validacion.herramienta.descripcion.longitud}")
     @Column(length = 255)
     private String descripcion;
+
+    @NotNull(message = "{validacion.herramienta.valorUnitario.requerido}")
+    @DecimalMin(value = "0.0", message = "{validacion.herramienta.valorUnitario.negativo}")
+    @Column(name = "valor_unitario", nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorUnitario = BigDecimal.ZERO;
 
     @NotBlank(message = "{validacion.herramienta.estado.requerido}")
     @Size(max = 20, message = "{validacion.herramienta.estado.longitud}")

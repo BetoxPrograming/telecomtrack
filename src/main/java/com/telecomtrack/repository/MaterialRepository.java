@@ -18,6 +18,14 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query("SELECT m FROM Material m WHERE m.stockActual <= m.stockMinimo")
     List<Material> findMaterialesConStockBajo();
 
+    @Query("SELECT DISTINCT d.material FROM DetalleMaterialEstimado d "
+            + "WHERE d.listado.proyecto.supervisor.idUsuario = :idSupervisor "
+            + "AND d.listado.estado = :estadoListado "
+            + "AND d.material.stockActual <= d.material.stockMinimo")
+    List<Material> findMaterialesConStockBajoPorSupervisor(
+            @Param("idSupervisor") Integer idSupervisor,
+            @Param("estadoListado") String estadoListado);
+
     @Query("SELECT m FROM Material m WHERE (:idUbicacion IS NULL OR m.ubicacion.idUbicacion = :idUbicacion) "
             + "AND (:texto IS NULL OR :texto = '' "
             + "     OR LOWER(m.nombre) LIKE LOWER(CONCAT('%', :texto, '%')) "

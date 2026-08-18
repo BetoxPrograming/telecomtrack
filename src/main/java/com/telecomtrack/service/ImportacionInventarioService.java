@@ -31,7 +31,7 @@ public class ImportacionInventarioService {
     public static final String TIPO_MATERIAL = "MATERIAL";
 
     private static final List<String> ENCABEZADO_HERRAMIENTA = List.of(
-            "codigo", "nombre", "categoria", "descripcion", "ubicacion");
+            "codigo", "nombre", "categoria", "descripcion", "valor_unitario", "ubicacion");
 
     private static final List<String> ENCABEZADO_MATERIAL = List.of(
             "codigo", "nombre", "descripcion", "unidad_medida", "stock_actual",
@@ -163,7 +163,8 @@ public class ImportacionInventarioService {
         String nombre = requerido(valores.get(1), "nombre", locale);
         String categoria = requerido(valores.get(2), "categoria", locale);
         String descripcion = limpiar(valores.get(3));
-        String ubicacionNombre = requerido(valores.get(4), "ubicacion", locale);
+        BigDecimal valorUnitario = decimalNoNegativo(valores.get(4), "valor_unitario", locale);
+        String ubicacionNombre = requerido(valores.get(5), "ubicacion", locale);
 
         validarLongitud(codigo, "codigo", 50, locale);
         validarLongitud(nombre, "nombre", 100, locale);
@@ -188,6 +189,7 @@ public class ImportacionInventarioService {
         herramienta.setNombre(nombre);
         herramienta.setCategoria(categoria);
         herramienta.setDescripcion(descripcion.isBlank() ? null : descripcion);
+        herramienta.setValorUnitario(valorUnitario);
         herramienta.setEstado(HerramientaService.ESTADO_DISPONIBLE);
         herramienta.setUbicacion(ubicacion);
         herramienta.setFechaRetornoEstimada(null);

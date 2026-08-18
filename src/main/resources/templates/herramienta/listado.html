@@ -23,6 +23,7 @@
                 <th th:text="#{campo.nombre}"></th>
                 <th th:text="#{campo.categoria}"></th>
                 <th th:text="#{campo.descripcion}"></th>
+                <th th:text="#{herramienta.campo.valorUnitario}"></th>
                 <th th:text="#{campo.estado}"></th>
                 <th th:text="#{campo.detalles}"></th>
                 <th th:text="#{campo.acciones}"></th>
@@ -34,6 +35,7 @@
                 <td th:text="${herramienta.nombre}"></td>
                 <td th:text="${herramienta.categoria}"></td>
                 <td th:text="${herramienta.descripcion}"></td>
+                <td th:text="${#numbers.formatDecimal(herramienta.valorUnitario, 1, 2)}"></td>
                 <td>
                     <span th:replace="~{herramienta/fragmentos :: estadoTexto(estado=${herramienta.estado})}"></span>
                 </td>
@@ -63,7 +65,7 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(herramientas)}">
-                <td colspan="7" class="text-center" th:text="#{herramienta.mensaje.sin-registros}"></td>
+                <td colspan="8" class="text-center" th:text="#{herramienta.mensaje.sin-registros}"></td>
             </tr>
             </tbody>
         </table>

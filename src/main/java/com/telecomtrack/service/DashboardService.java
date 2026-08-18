@@ -1,5 +1,6 @@
 package com.telecomtrack.service;
 
+import com.telecomtrack.domain.ListadoMaterialEstimado;
 import com.telecomtrack.domain.Solicitud;
 import com.telecomtrack.dto.DashboardResumen;
 import com.telecomtrack.dto.DashboardSupervisor;
@@ -63,10 +64,12 @@ public class DashboardService {
         return DashboardSupervisor.builder()
                 .supervisor(supervisor)
                 .misProyectos(proyectoRepository.findBySupervisorIdUsuarioOrderByNombreAsc(idSupervisor))
-                .herramientasDisponibles(herramientaRepository.countByEstado(HerramientaService.ESTADO_DISPONIBLE))
+                .herramientasDisponibles(herramientaRepository.countDisponiblesPorSupervisor(
+                        idSupervisor, HerramientaService.ESTADO_DISPONIBLE))
                 .elementosEnUso(asignacionHerramientaRepository
                         .findByActivaTrueAndProyectoSupervisorIdUsuarioOrderByFechaAsignacionDesc(idSupervisor))
-                .materialesStockCritico(materialRepository.findMaterialesConStockBajo())
+                .materialesStockCritico(materialRepository.findMaterialesConStockBajoPorSupervisor(
+                        idSupervisor, ListadoMaterialEstimado.ESTADO_APROBADO))
                 .actividadReciente(solicitudRepository
                         .findTop10ByProyectoSupervisorIdUsuarioOrderByFechaSolicitudDesc(idSupervisor))
                 .build();

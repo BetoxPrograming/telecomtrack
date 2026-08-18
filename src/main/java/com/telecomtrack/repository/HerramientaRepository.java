@@ -16,6 +16,13 @@ public interface HerramientaRepository extends JpaRepository<Herramienta, Intege
 
     long countByEstado(String estado);
 
+    @Query("SELECT COUNT(DISTINCT h) FROM DetalleSolicitud d "
+            + "JOIN d.herramienta h "
+            + "WHERE d.solicitud.proyecto.supervisor.idUsuario = :idSupervisor "
+            + "AND h.estado = :estado")
+    long countDisponiblesPorSupervisor(@Param("idSupervisor") Integer idSupervisor,
+                                        @Param("estado") String estado);
+
     @Query("SELECT h FROM Herramienta h WHERE h.estado = :estado "
             + "AND (:idUbicacion IS NULL OR h.ubicacion.idUbicacion = :idUbicacion) "
             + "AND (:texto IS NULL OR :texto = '' "

@@ -7,13 +7,14 @@ La pantalla está disponible en `/inventario/importar` para Administrador y Bode
 Encabezado obligatorio:
 
 ```text
-codigo,nombre,categoria,descripcion,ubicacion
+codigo,nombre,categoria,descripcion,valor_unitario,ubicacion
 ```
 
 - `codigo`: obligatorio y único.
 - `nombre`: obligatorio.
 - `categoria`: obligatorio.
 - `descripcion`: opcional.
+- `valor_unitario`: obligatorio y debe ser un número no negativo.
 - `ubicacion`: debe coincidir con una ubicación ya registrada.
 - Las herramientas importadas ingresan con estado `Disponible`.
 

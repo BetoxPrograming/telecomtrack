@@ -44,6 +44,10 @@
                 <span th:text="${herramienta.descripcion}"></span>
             </div>
             <div class="mb-2">
+                <strong th:text="#{herramienta.campo.valorUnitario}"></strong>:
+                <span th:text="${#numbers.formatDecimal(herramienta.valorUnitario, 1, 2)}"></span>
+            </div>
+            <div class="mb-2">
                 <strong><span th:text="#{campo.estado}"></span>:</strong>
                 <span th:replace="~{herramienta/fragmentos :: estadoTexto(estado=${herramienta.estado})}"></span>
             </div>

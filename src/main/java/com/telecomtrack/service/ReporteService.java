@@ -148,8 +148,10 @@ public class ReporteService {
                 .ubicacion(herramienta.getUbicacion() != null ? herramienta.getUbicacion().getNombre() : null)
                 .fechaReferencia(fechaReferencia)
                 .cantidad(1)
-                .valorUnitario(BigDecimal.ZERO)
-                .valorTotal(BigDecimal.ZERO)
+                .valorUnitario(herramienta.getValorUnitario())
+                .valorTotal(herramienta.getValorUnitario() != null
+                        ? herramienta.getValorUnitario()
+                        : BigDecimal.ZERO)
                 .build();
     }
 
