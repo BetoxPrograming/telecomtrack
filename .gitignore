@@ -44,3 +44,4 @@ logs/
 
 # ── Firebase (credenciales privadas) ────────────
 src/main/resources/firebase/
+src/main/resources/application.properties
