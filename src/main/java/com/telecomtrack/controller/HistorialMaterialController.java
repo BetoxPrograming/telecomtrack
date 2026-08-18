@@ -1,35 +1,36 @@
 package com.telecomtrack.controller;
 
+import com.telecomtrack.domain.Usuario;
 import com.telecomtrack.service.MovimientoService;
-import com.telecomtrack.service.UsuarioActualService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.telecomtrack.service.UsuarioService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/historial-material")
 public class HistorialMaterialController {
 
     private final MovimientoService movimientoService;
-    private final UsuarioActualService usuarioActualService;
+    private final UsuarioService usuarioService;
 
-    public HistorialMaterialController(MovimientoService movimientoService,
-                                       UsuarioActualService usuarioActualService) {
+    public HistorialMaterialController(
+            MovimientoService movimientoService,
+            UsuarioService usuarioService) {
         this.movimientoService = movimientoService;
-        this.usuarioActualService = usuarioActualService;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping
-    public String historial(HttpServletRequest request, Model model) {
-        var usuario = usuarioActualService.getUsuarioAutenticado(request);
+    public String historial(Principal principal, Model model) {
+        Usuario tecnico = usuarioService.getUsuarioPorCorreoActivo(principal.getName());
 
-        if (usuario == null) {
-            return "redirect:/";
-        }
-
-        model.addAttribute("movimientos", movimientoService.getMovimientosPorResponsable(usuario.getNombre() + " " + usuario.getApellido()));
+        model.addAttribute(
+                "movimientos",
+                movimientoService.getSalidasPorTecnico(tecnico.getIdUsuario()));
         model.addAttribute("idiomaRuta", "/historial-material");
         return "materiales/historial-tecnico";
     }

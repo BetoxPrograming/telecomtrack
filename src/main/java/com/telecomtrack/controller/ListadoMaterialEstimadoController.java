@@ -1,14 +1,24 @@
 package com.telecomtrack.controller;
 
-import com.telecomtrack.service.*;
+import com.telecomtrack.domain.ListadoMaterialEstimado;
+import com.telecomtrack.domain.Usuario;
+import com.telecomtrack.service.ListadoMaterialEstimadoService;
+import com.telecomtrack.service.MaterialService;
+import com.telecomtrack.service.ProyectoService;
+import com.telecomtrack.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +26,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/listado-material-estimado")
 public class ListadoMaterialEstimadoController {
+
+    private static final String ROL_ADMINISTRADOR = "Administrador";
 
     private final ListadoMaterialEstimadoService listadoService;
     private final ProyectoService proyectoService;
@@ -37,6 +49,10 @@ public class ListadoMaterialEstimadoController {
 
     private String msg(String key) {
         return messageSource.getMessage(key, null, key, LocaleContextHolder.getLocale());
+    }
+
+    private Usuario getUsuarioAutenticado(Principal principal) {
+        return usuarioService.getUsuarioPorCorreoActivo(principal.getName());
     }
 
     @GetMapping("/nuevo")
@@ -89,47 +105,70 @@ public class ListadoMaterialEstimadoController {
     }
 
     @GetMapping("/pendientes")
-    public String pendientes(@RequestParam(required = false) Integer supervisorId, Model model) {
+    public String pendientes(Principal principal, Model model) {
 
-        model.addAttribute("supervisores", usuarioService.getSupervisoresActivos());
-        model.addAttribute("supervisorId", supervisorId);
-        model.addAttribute("pendientes", listadoService.getPendientes());
+        Usuario supervisor = getUsuarioAutenticado(principal);
+        model.addAttribute("supervisor", supervisor);
+
+        if (ROL_ADMINISTRADOR.equals(supervisor.getRol())) {
+            model.addAttribute("pendientes", listadoService.getPendientes());
+        } else {
+            model.addAttribute("pendientes",
+                    listadoService.getPendientesPorSupervisor(supervisor.getIdUsuario()));
+        }
 
         return "listadoMaterialEstimado/pendientes";
     }
 
     @GetMapping("/consultar/{idListado}")
     public String consultar(@PathVariable Integer idListado,
-                             @RequestParam(required = false) Integer supervisorId,
+                             Principal principal,
                              Model model) {
 
-        var listado = listadoService.getListado(idListado);
+        var listadoOpt = listadoService.getListado(idListado);
 
-        if (listado.isEmpty()) {
+        if (listadoOpt.isEmpty()) {
             return "redirect:/listado-material-estimado/pendientes";
         }
 
-        model.addAttribute("listado", listado.get());
-        model.addAttribute("supervisorId", supervisorId);
-        model.addAttribute("supervisores", usuarioService.getSupervisoresActivos());
+        Usuario supervisor = getUsuarioAutenticado(principal);
+        ListadoMaterialEstimado listado = listadoOpt.get();
+
+        boolean esAdministrador = ROL_ADMINISTRADOR.equals(supervisor.getRol());
+        boolean esSupervisorDelProyecto = listado.getProyecto().getSupervisor() != null
+                && listado.getProyecto().getSupervisor().getIdUsuario()
+                .equals(supervisor.getIdUsuario());
+
+        if (!esAdministrador && !esSupervisorDelProyecto) {
+            return "redirect:/acceso_denegado";
+        }
+
+        model.addAttribute("listado", listado);
+        model.addAttribute("supervisor", supervisor);
 
         return "listadoMaterialEstimado/consulta";
     }
 
     @PostMapping("/decidir/{idListado}")
     public String decidir(@PathVariable Integer idListado,
-                           @RequestParam Integer supervisorId,
                            @RequestParam String nuevoEstado,
                            @RequestParam(required = false) String comentario,
+                           Principal principal,
                            RedirectAttributes flash) {
 
+        Usuario supervisor = getUsuarioAutenticado(principal);
+
         try {
-            listadoService.decidir(idListado, supervisorId, nuevoEstado, comentario);
+            listadoService.decidir(
+                    idListado,
+                    supervisor.getIdUsuario(),
+                    nuevoEstado,
+                    comentario);
             flash.addFlashAttribute("exitoo", msg("listadoMaterialEstimado.mensaje.decidido"));
         } catch (IllegalArgumentException | IllegalStateException exception) {
             flash.addFlashAttribute("error", msg(exception.getMessage()));
         }
 
-        return "redirect:/listado-material-estimado/pendientes?supervisorId=" + supervisorId;
+        return "redirect:/listado-material-estimado/pendientes";
     }
 }

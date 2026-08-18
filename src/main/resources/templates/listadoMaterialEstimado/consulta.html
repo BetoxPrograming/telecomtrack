@@ -63,14 +63,7 @@
         <div class="card-header bg-secondary text-white" th:text="#{listadoMaterialEstimado.accion.decidir}">Decision del supervisor</div>
         <div class="card-body">
 
-            <div class="alert alert-info" th:if="${supervisorId == null}">
-                <span th:text="#{listadoMaterialEstimado.mensaje.seleccioneSupervisor}">Seleccione un supervisor en la lista de pendientes para poder decidir.</span>
-            </div>
-
-            <form th:if="${supervisorId != null}"
-                  th:action="@{/listado-material-estimado/decidir/{id}(id=${listado.idListado})}" method="post">
-
-                <input type="hidden" name="supervisorId" th:value="${supervisorId}" />
+            <form th:action="@{/listado-material-estimado/decidir/{id}(id=${listado.idListado})}" method="post">
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold" th:text="#{listadoMaterialEstimado.campo.comentario}">Comentario</label>

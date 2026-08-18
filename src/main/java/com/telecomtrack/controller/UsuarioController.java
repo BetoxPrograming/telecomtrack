@@ -27,7 +27,8 @@ public class UsuarioController {
                 "{rol.administrador}",
                 "{rol.bodeguero}",
                 "{rol.tecnico}",
-                "{rol.supervisor}"
+                "{rol.supervisor}",
+                "{rol.visitante}"
         };
 
         model.addAttribute("roles", roles);
@@ -54,6 +55,14 @@ public class UsuarioController {
             BindingResult bindingResult,
             Model model) {
 
+        if (usuario.getIdUsuario() == null
+                && (usuario.getPassword() == null
+                || usuario.getPassword().isBlank())) {
+            bindingResult.rejectValue(
+                    "password",
+                    "validacion.usuario.password.requerida");
+        }
+
         if (bindingResult.hasErrors()) {
             agregarRoles(model);
             model.addAttribute("idiomaRuta", usuario.getIdUsuario() == null
@@ -77,7 +86,10 @@ public class UsuarioController {
             return "redirect:/usuario/listado";
         }
 
-        model.addAttribute("usuario", usuario.get());
+        var usuarioActual = usuario.get();
+        usuarioActual.setPassword(null);
+
+        model.addAttribute("usuario", usuarioActual);
         model.addAttribute("idiomaRuta", "/usuario/modificar/" + idUsuario);
         agregarRoles(model);
         return "usuario/modifica";

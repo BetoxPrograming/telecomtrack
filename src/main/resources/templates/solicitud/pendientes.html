@@ -19,28 +19,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-            <form method="get" th:action="@{/solicitud/pendientes}" class="row g-3 align-items-end">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{rol.bodeguero}">Bodeguero</label>
-                    <select name="bodegueroId" class="form-select" onchange="this.form.submit()">
-                        <option value="" th:text="#{rol.seleccionar}">-- Seleccione --</option>
-                        <option th:each="b : ${bodegueros}"
-                                th:value="${b.idUsuario}"
-                                th:text="${b.nombre + ' ' + b.apellido}"
-                                th:selected="${bodegueroId != null and bodegueroId == b.idUsuario}">
-                        </option>
-                    </select>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="alert alert-info" th:if="${bodegueroId == null}">
-        <span th:text="#{solicitud.mensaje.seleccioneBodeguero}">Seleccione un bodeguero para poder aprobar o rechazar.</span>
-    </div>
-
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div th:if="${#lists.isEmpty(pendientes)}" class="text-center py-5 text-muted">
@@ -70,15 +48,12 @@
 
                             <form th:action="@{/solicitud/aprobar/{id}(id=${s.idSolicitud})}"
                                   method="post" class="d-inline">
-                                <input type="hidden" name="bodegueroId" th:value="${bodegueroId}" />
                                 <button type="submit" class="btn btn-sm btn-success"
-                                        th:disabled="${bodegueroId == null}"
                                         th:text="#{solicitud.accion.aprobar}">Aprobar</button>
                             </form>
 
-                            <a th:href="@{/solicitud/rechazar/{id}(id=${s.idSolicitud},bodegueroId=${bodegueroId})}"
+                            <a th:href="@{/solicitud/rechazar/{id}(id=${s.idSolicitud})}"
                                class="btn btn-sm btn-danger"
-                               th:classappend="${bodegueroId == null} ? 'disabled'"
                                th:text="#{solicitud.accion.rechazar}">Rechazar</a>
                         </td>
                     </tr>

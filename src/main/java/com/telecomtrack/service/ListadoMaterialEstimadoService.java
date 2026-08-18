@@ -88,6 +88,14 @@ public class ListadoMaterialEstimadoService {
     }
 
     @Transactional(readOnly = true)
+    public List<ListadoMaterialEstimado> getPendientesPorSupervisor(Integer idSupervisor) {
+        return listadoRepository
+                .findByEstadoAndProyectoSupervisorIdUsuarioOrderByFechaCreacionAsc(
+                        ListadoMaterialEstimado.ESTADO_PENDIENTE,
+                        idSupervisor);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<ListadoMaterialEstimado> getListado(Integer idListado) {
         return listadoRepository.findById(idListado);
     }
@@ -118,6 +126,14 @@ public class ListadoMaterialEstimadoService {
 
         Usuario supervisor = usuarioRepository.findById(idSupervisor)
                 .orElseThrow(() -> new IllegalArgumentException("listadoMaterialEstimado.error.supervisor.noExiste"));
+
+        boolean esAdministrador = "Administrador".equals(supervisor.getRol());
+        boolean esSupervisorDelProyecto = listado.getProyecto().getSupervisor() != null
+                && listado.getProyecto().getSupervisor().getIdUsuario().equals(idSupervisor);
+
+        if (!esAdministrador && !esSupervisorDelProyecto) {
+            throw new IllegalStateException("listadoMaterialEstimado.error.noAutorizado");
+        }
 
         listado.setEstado(nuevoEstado);
         listado.setComentarioSupervisor(comentario == null ? null : comentario.trim());

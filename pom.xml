@@ -200,8 +200,60 @@
         </dependency>
 
         <!--
-            ZXing Core.
-            Sirve para generar y leer códigos QR.
+            Spring Security.
+            Se utiliza para la autenticación contra la base de datos,
+            el inicio y cierre de sesión y el cifrado de contraseñas.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!--
+            Integración de Spring Security con Thymeleaf.
+            Permite consultar el estado de autenticación desde las vistas.
+        -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
+        <!--
+            Spring Mail.
+            Se utiliza para el envío de notificaciones por correo electrónico.
+            La configuración sensible se recibe mediante variables de entorno.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!--
+            Apache POI (OOXML).
+            Sirve para generar archivos Excel (.xlsx).
+            Se usa en los reportes finales para exportar tablas a Excel.
+        -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+
+        <!--
+            OpenPDF.
+            Sirve para generar archivos PDF.
+            Se usa en los reportes finales para exportar tablas a PDF.
+        -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <!--
+            ZXing.
+            Se utiliza para generar el código QR único de cada herramienta.
+            Esta funcionalidad corresponde a la investigación adicional del equipo.
         -->
         <dependency>
             <groupId>com.google.zxing</groupId>
@@ -209,14 +261,21 @@
             <version>3.5.3</version>
         </dependency>
 
-        <!--
-            ZXing JavaSE.
-            Complementa ZXing para renderizar el QR como imagen.
-        -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>3.5.3</version>
+        </dependency>
+
+        <!--
+            Firebase Admin.
+            Se usa para almacenar las fotografías de devoluciones en Firebase Storage,
+            siguiendo el mecanismo trabajado en la semana 4 del curso.
+        -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.9.0</version>
         </dependency>
 
     </dependencies>

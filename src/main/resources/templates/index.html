@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{general/fragmentos :: head}"></head>
 
@@ -19,7 +20,7 @@
 
     <section class="row g-4">
 
-        <div class="col-md-4">
+        <div class="col-md-4" sec:authorize="hasRole('Administrador')">
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <h2 class="h4 card-title" th:text="#{usuario.titulo.listado}"></h2>
@@ -31,7 +32,19 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" sec:authorize="hasRole('Administrador')">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{notificacion.titulo}"></h2>
+                    <p class="card-text text-muted" th:text="#{notificacion.descripcion.corta}"></p>
+                    <a th:href="@{/notificacion/configuracion}"
+                       class="btn btn-primary mt-auto"
+                       th:text="#{notificacion.accion.menu}"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" sec:authorize="hasRole('Bodeguero')">
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <h2 class="h4 card-title" th:text="#{ubicacion.titulo.listado}"></h2>
@@ -55,7 +68,19 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" sec:authorize="hasRole('Bodeguero')">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{importacion.titulo}"></h2>
+                    <p class="card-text text-muted" th:text="#{importacion.descripcion.corta}"></p>
+                    <a th:href="@{/inventario/importar}"
+                       class="btn btn-primary mt-auto"
+                       th:text="#{importacion.accion.menu}"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" sec:authorize="hasRole('Supervisor')">
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <h2 class="h4 card-title" th:text="#{proyecto.titulo.listado}"></h2>
@@ -67,16 +92,18 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" sec:authorize="hasAnyRole('Técnico','Bodeguero')">
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <h2 class="h4 card-title" th:text="#{solicitud.titulo.listado}"></h2>
                     <p class="card-text text-muted" th:text="#{inicio.solicitudes.descripcion}"></p>
                     <div class="mt-auto d-flex gap-2">
-                        <a th:href="@{/solicitud/nueva}"
+                        <a sec:authorize="hasRole('Técnico')"
+                           th:href="@{/solicitud/nueva}"
                            class="btn btn-primary"
                            th:text="#{solicitud.accion.nueva}"></a>
-                        <a th:href="@{/solicitud/pendientes}"
+                        <a sec:authorize="hasRole('Bodeguero')"
+                           th:href="@{/solicitud/pendientes}"
                            class="btn btn-outline-primary"
                            th:text="#{solicitud.titulo.pendientes}"></a>
                     </div>
@@ -84,7 +111,36 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" sec:authorize="hasRole('Técnico')">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{devolucion.titulo.nueva}"></h2>
+                    <p class="card-text text-muted" th:text="#{inicio.devoluciones.descripcion}"></p>
+                    <div class="mt-auto d-flex gap-2 flex-wrap">
+                        <a th:href="@{/devolucion/nueva}"
+                           class="btn btn-primary"
+                           th:text="#{devolucion.accion.registrar}"></a>
+                        <a th:href="@{/devolucion/historial}"
+                           class="btn btn-outline-primary"
+                           th:text="#{devolucion.accion.historial}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" sec:authorize="hasRole('Técnico')">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{historial.material.titulo}"></h2>
+                    <p class="card-text text-muted" th:text="#{inicio.historialMaterial.descripcion}"></p>
+                    <a th:href="@{/historial-material}"
+                       class="btn btn-primary mt-auto"
+                       th:text="#{historial.material.accion}"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" sec:authorize="hasRole('Supervisor')">
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <h2 class="h4 card-title" th:text="#{listadoMaterialEstimado.titulo.listado}"></h2>
@@ -92,6 +148,29 @@
                     <a th:href="@{/listado-material-estimado/pendientes}"
                        class="btn btn-primary mt-auto"
                        th:text="#{listadoMaterialEstimado.titulo.pendientes}"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" sec:authorize="hasAnyRole('Bodeguero','Supervisor')">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{dashboard.titulo}"></h2>
+                    <p class="card-text text-muted" th:text="#{inicio.dashboard.descripcion}"></p>
+                    <div class="mt-auto d-flex gap-2">
+                        <a sec:authorize="hasRole('Bodeguero')"
+                           th:href="@{/dashboard}"
+                           class="btn btn-primary"
+                           th:text="#{dashboard.titulo}"></a>
+                        <a sec:authorize="hasRole('Supervisor')"
+                           th:href="@{/dashboard/supervisor}"
+                           class="btn btn-primary"
+                           th:text="#{dashboard.supervisor.titulo}"></a>
+                        <a sec:authorize="hasRole('Supervisor')"
+                           th:href="@{/reportes}"
+                           class="btn btn-outline-primary"
+                           th:text="#{reporte.menu.titulo}"></a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -4,17 +4,20 @@ import com.telecomtrack.domain.AsignacionHerramienta;
 import com.telecomtrack.domain.DevolucionHerramienta;
 import com.telecomtrack.domain.FotoDevolucionHerramienta;
 import com.telecomtrack.domain.Herramienta;
+import com.telecomtrack.domain.Proyecto;
 import com.telecomtrack.repository.AsignacionHerramientaRepository;
 import com.telecomtrack.repository.DevolucionHerramientaRepository;
 import com.telecomtrack.repository.FotoDevolucionHerramientaRepository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DevolucionHerramientaService {
@@ -48,6 +51,8 @@ public class DevolucionHerramientaService {
             Integer idAsignacion,
             Integer idTecnico,
             String estadoDevolucion,
+            LocalDate fechaRetornoEstimada,
+            String justificacionBaja,
             List<MultipartFile> fotos) {
 
         AsignacionHerramienta asignacion = asignacionHerramientaRepository
@@ -66,6 +71,7 @@ public class DevolucionHerramientaService {
             throw new IllegalStateException("devolucion.error.estado.invalido");
         }
 
+        validarDatosEstado(estadoDevolucion, fechaRetornoEstimada, justificacionBaja);
         validarFotos(fotos);
 
         DevolucionHerramienta devolucion = new DevolucionHerramienta();
@@ -75,20 +81,37 @@ public class DevolucionHerramientaService {
         devolucion = devolucionHerramientaRepository.save(devolucion);
 
         guardarFotos(devolucion, fotos);
-        cerrarAsignacionYActualizarHerramienta(asignacion, estadoDevolucion, devolucion);
+        cerrarAsignacionYActualizarHerramienta(
+                asignacion,
+                estadoDevolucion,
+                fechaRetornoEstimada,
+                justificacionBaja);
 
         return devolucion;
-    }
-
-    @Transactional
-    public boolean enviarAMantenimiento(Integer idHerramienta, LocalDate fechaRetornoEstimada) {
-        return herramientaService.enviarAMantenimiento(idHerramienta, fechaRetornoEstimada);
     }
 
     @Transactional(readOnly = true)
     public List<AsignacionHerramienta> getAsignacionesActivasDeTecnico(Integer idTecnico) {
         return asignacionHerramientaRepository
                 .findByTecnicoIdUsuarioAndActivaTrueOrderByFechaAsignacionDesc(idTecnico);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Proyecto> getProyectosTecnico(Integer idTecnico) {
+        List<AsignacionHerramienta> asignaciones = asignacionHerramientaRepository
+                .findByTecnicoIdUsuarioOrderByFechaAsignacionDesc(idTecnico);
+
+        Map<Integer, Proyecto> proyectos = new LinkedHashMap<>();
+
+        for (AsignacionHerramienta asignacion : asignaciones) {
+            if (asignacion.getProyecto() != null) {
+                proyectos.putIfAbsent(
+                        asignacion.getProyecto().getIdProyecto(),
+                        asignacion.getProyecto());
+            }
+        }
+
+        return new ArrayList<>(proyectos.values());
     }
 
     @Transactional(readOnly = true)
@@ -150,27 +173,16 @@ public class DevolucionHerramientaService {
             return;
         }
 
-        List<MultipartFile> fotosValidas = new ArrayList<>();
-        for (MultipartFile foto : fotos) {
-            if (foto != null && !foto.isEmpty()) {
-                fotosValidas.add(foto);
-            }
-        }
-
-        for (MultipartFile foto : fotosValidas) {
-            String contentType = foto.getContentType();
-            if (!esTipoValido(contentType)) {
-                throw new IllegalStateException("devolucion.error.foto.tipo");
-            }
-
-            if (foto.getSize() > 5L * 1024 * 1024) {
-                throw new IllegalStateException("devolucion.error.foto.tamano");
-            }
-        }
-
         int indice = 0;
-        for (MultipartFile foto : fotosValidas) {
-            String ruta = archivoImagenService.guardarImagen(foto, "devolucion-" + devolucion.getIdDevolucion());
+
+        for (MultipartFile foto : fotos) {
+            if (foto == null || foto.isEmpty()) {
+                continue;
+            }
+
+            String ruta = archivoImagenService.guardarImagen(
+                    foto,
+                    "devolucion-" + devolucion.getIdDevolucion());
 
             if (indice == 0) {
                 devolucion.setRutaFoto(ruta);
@@ -190,7 +202,8 @@ public class DevolucionHerramientaService {
     private void cerrarAsignacionYActualizarHerramienta(
             AsignacionHerramienta asignacion,
             String estadoDevolucion,
-            DevolucionHerramienta devolucion) {
+            LocalDate fechaRetornoEstimada,
+            String justificacionBaja) {
 
         asignacion.setActiva(false);
         asignacionHerramientaRepository.save(asignacion);
@@ -206,7 +219,7 @@ public class DevolucionHerramientaService {
 
         if (ESTADO_DANADA.equals(estadoDevolucion)) {
             herramienta.setEstado(HerramientaService.ESTADO_MANTENIMIENTO);
-            herramienta.setFechaRetornoEstimada(LocalDate.now().plusDays(7));
+            herramienta.setFechaRetornoEstimada(fechaRetornoEstimada);
             herramienta.setFechaBaja(null);
             herramienta.setJustificacionBaja(null);
         }
@@ -214,11 +227,32 @@ public class DevolucionHerramientaService {
         if (ESTADO_PERDIDA.equals(estadoDevolucion)) {
             herramienta.setEstado(HerramientaService.ESTADO_BAJA);
             herramienta.setFechaBaja(LocalDate.now());
-            herramienta.setJustificacionBaja("Baja por pérdida reportada en devolución.");
+            herramienta.setJustificacionBaja(justificacionBaja.trim());
             herramienta.setFechaRetornoEstimada(null);
         }
 
         herramientaService.guardar(herramienta);
+    }
+
+    private void validarDatosEstado(
+            String estadoDevolucion,
+            LocalDate fechaRetornoEstimada,
+            String justificacionBaja) {
+
+        if (ESTADO_DANADA.equals(estadoDevolucion)) {
+            if (fechaRetornoEstimada == null) {
+                throw new IllegalStateException("devolucion.error.fechaRetorno.requerida");
+            }
+
+            if (fechaRetornoEstimada.isBefore(LocalDate.now())) {
+                throw new IllegalStateException("devolucion.error.fechaRetorno.invalida");
+            }
+        }
+
+        if (ESTADO_PERDIDA.equals(estadoDevolucion)
+                && (justificacionBaja == null || justificacionBaja.isBlank())) {
+            throw new IllegalStateException("devolucion.error.justificacion.requerida");
+        }
     }
 
     private void validarFotos(List<MultipartFile> fotos) {
@@ -226,9 +260,23 @@ public class DevolucionHerramientaService {
             return;
         }
 
-        long cantidad = fotos.stream()
-                .filter(foto -> foto != null && !foto.isEmpty())
-                .count();
+        int cantidad = 0;
+
+        for (MultipartFile foto : fotos) {
+            if (foto == null || foto.isEmpty()) {
+                continue;
+            }
+
+            cantidad++;
+
+            if (!esTipoValido(foto.getContentType())) {
+                throw new IllegalStateException("devolucion.error.foto.tipo");
+            }
+
+            if (foto.getSize() > 5L * 1024 * 1024) {
+                throw new IllegalStateException("devolucion.error.foto.tamano");
+            }
+        }
 
         if (cantidad > 3) {
             throw new IllegalStateException("devolucion.error.foto.maximo");

@@ -48,6 +48,10 @@ public class Movimiento implements Serializable {
     private Material material;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_tecnico")
+    private Usuario tecnico;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_proveedor")
     private Proveedor proveedor;
 }

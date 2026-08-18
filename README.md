@@ -3,138 +3,74 @@
 Sistema web transaccional para gestionar herramientas y materiales de **Telecom Power Systems**, mejorar la trazabilidad del inventario y registrar las operaciones asociadas a proyectos y personal técnico.
 
 > [!IMPORTANT]
-> TelecomTrack es el proyecto final del curso **SC-403 Desarrollo de Aplicaciones Web y Patrones** de la Universidad Fidélitas.  
+> TelecomTrack es el proyecto final del curso **SC-403 Desarrollo de Aplicaciones Web y Patrones** de la Universidad Fidélitas.
 > La implementación debe respetar las tecnologías, dependencias, estructura MVC y forma de codificación trabajadas durante el curso. Un cambio fuera de esos parámetros puede invalidar el avance correspondiente.
 
 ---
 
 ## 📋 Descripción
 
-Telecom Power Systems administra herramientas y materiales mediante hojas de cálculo y registros manuales. Esto dificulta conocer las existencias reales, identificar responsables, controlar las asignaciones y consultar el historial de movimientos.
+Telecom Power Systems administraba herramientas y materiales mediante hojas de cálculo y registros manuales. Esto dificultaba conocer las existencias reales, identificar responsables, controlar las asignaciones y consultar el historial de movimientos.
 
-TelecomTrack busca centralizar ese proceso mediante una aplicación web con inventario, solicitudes, aprobaciones, devoluciones, proyectos, usuarios, roles y registros transaccionales.
+TelecomTrack centraliza ese proceso mediante una aplicación web con inventario, solicitudes, aprobaciones, devoluciones, proyectos, usuarios, roles, dashboards en tiempo real, reportes exportables y registros transaccionales.
 
 ---
 
-## 🚧 Estado del Proyecto
+## ✅ Funcionalidades implementadas
 
-Estado actual: **desarrollo del Avance 2**.
-
-| Entrega | Estado |
+| Módulo | Descripción |
 |---|---|
-| Avance 1 | Finalizado |
-| Avance 2 | En desarrollo |
-| Entrega final y defensa | Planificada |
-
----
-
-## 📦 Alcance por Entrega
-
-### 1️⃣ Entrega 1 — Avance 1
-
-El primer avance definió el problema, el cliente, los usuarios, las historias de usuario, los criterios de aceptación, la priorización del backlog, el flujo de navegación, el modelo preliminar de datos y el prototipo inicial.
-
-La documentación de esta entrega se encuentra en [`docs/avance1/`](docs/avance1/).
-
-### 2️⃣ Entrega 2 — Avance 2
-
-El segundo avance debe demostrar una implementación funcional del proyecto e incluir:
-
-- Al menos el 50 % de las historias de usuario o los flujos de mayor prioridad completamente funcionales.
-- Proyecto Java con Spring Boot organizado en `domain`, `repository`, `service` y `controller`.
-- Vistas dinámicas con Thymeleaf.
-- Bootstrap incorporado según lo trabajado en clase.
-- Persistencia mediante Hibernate/JPA y una base de datos relacional.
-- CRUD de las entidades principales.
-- Navegación coherente con el prototipo del Avance 1.
-- Participación verificable de todos los integrantes mediante ramas, commits, revisiones y pull requests.
-- Instrucciones preliminares de configuración y ejecución.
-- Demostración del funcionamiento real del sistema.
-
-### 3️⃣ Entrega 3 — Artículo, Aplicación Final y Defensa
-
-La tercera entrega debe completar el alcance académico y técnico del proyecto:
-
-- Aplicación web transaccional terminada.
-- Base de datos con al menos ocho tablas y una tabla destinada a registrar transacciones.
-- Autenticación, roles y restricciones de acceso funcionales.
-- Internacionalización mediante archivos de idioma.
-- Integración de al menos seis temas desarrollados en el curso.
-- Una funcionalidad o tecnología adicional investigada por el equipo.
-- Script, respaldo o instrucciones para crear y poblar la base de datos.
-- Usuarios de prueba para los roles implementados.
-- README técnico actualizado.
-- Artículo científico en formato IEEE.
-- Evidencia final de colaboración en GitHub.
-- Presentación y demostración funcional durante la defensa.
-
----
-
-## 👥 Equipo
-
-Las responsabilidades se asignan y actualizan en cada avance según el backlog aprobado por el equipo.
-
-| Integrante | GitHub | Responsabilidad actual |
-|---|---|---|
-| Allan Fauricio Fonseca Batista | [@fauricio9656](https://github.com/fauricio9656) | Issue #4 — Materiales y control de stock |
-| Carlos Roberto Pérez Rodríguez | [@ZerepSolrac412](https://github.com/ZerepSolrac412) | Issue #3 — Gestión de herramientas |
-| Sebastián Segura Camacho | [@SebastianSC11](https://github.com/SebastianSC11) | Issue #5 — Solicitudes e historial del técnico |
-| Alberto Manuel Zúñiga Sánchez | [@BetoxPrograming](https://github.com/BetoxPrograming) | Issues #1 y #2 — Configuración base, usuarios, autenticación y roles |
-
----
-
-## 🔀 Flujo de Desarrollo del Avance 2
-
-El trabajo del Avance 2 está organizado mediante el milestone **Avance 2 — Implementación funcional del 50%** y cinco issues asignados entre los integrantes.
-
-La rama `main` contiene únicamente versiones estables y entregables. La rama `develop` se utiliza para integrar y probar el trabajo del equipo antes de actualizar `main`.
-
-El flujo establecido es:
-
-```text
-main
-└── develop
-    ├── chore/project-foundation
-    ├── feature/hu-10-user-security
-    ├── feature/tools-management
-    ├── feature/materials-stock
-    └── feature/requests-history
-```
-
-Cada rama de trabajo debe crearse desde la versión más reciente de `develop`.
-
-Al completar un issue:
-
-1. El responsable publica su rama.
-2. Abre un pull request hacia `develop`.
-3. Relaciona el pull request con su issue mediante `Closes #<número>`.
-4. Documenta las pruebas realizadas y cualquier limitación conocida.
-5. Solicita la revisión correspondiente.
-6. Atiende las observaciones antes de la integración.
-
-Los pull requests creados por otros integrantes requieren la aprobación de **@BetoxPrograming**, administrador del flujo de integración. Los pull requests creados por **@BetoxPrograming** requieren la aprobación de al menos otro integrante.
-
-Cuando todos los issues del milestone estén integrados y el sistema haya sido probado, se abrirá un pull request final desde `develop` hacia `main`.
-
----
-
-## 🛠️ Tecnologías y Herramientas
-
-| Área | Tecnología o herramienta | Estado |
-|---|---|---|
-| Lenguaje | Java 21 | Preparación |
-| Framework | Spring Boot | Preparación |
-| Arquitectura | Modelo MVC | Preparación |
-| Vistas | HTML5, CSS y Thymeleaf | Preparación |
-| Interfaz | Bootstrap mediante WebJars | Preparación |
-| Persistencia | Spring Data JPA e Hibernate | Preparación |
-| Base de datos | MySQL | Preparación |
-| Construcción | Maven Wrapper | Preparación |
-| Control de versiones | Git y GitHub | En uso |
-| Prototipado | Figma | Utilizado en el Avance 1 |
+| Usuarios y roles | Alta, edición y desactivación de usuarios (Administrador, Bodeguero, Técnico, Supervisor). |
+| Ubicaciones | Bodegas/sitios donde reside el inventario. |
+| Herramientas | Catálogo, estados (disponible, asignada, mantenimiento, baja) y ciclo de vida completo. |
+| Materiales y stock | CRUD, entradas de stock, historial de movimientos y alerta de stock mínimo. |
+| Proyectos | Registro de proyectos con supervisor asignado. |
+| Listados de materiales estimados | Creación por proyecto y decisión del supervisor (aprobar, rechazar, pedir modificación). |
+| Solicitudes | Solicitud de herramientas/materiales, aprobación o rechazo por bodega. |
+| Dashboard | Indicadores en tiempo real para administrador y vista filtrada por proyectos para el supervisor. |
+| Reportes | Consumo por proyecto, inventario general y activos por técnico, cada uno exportable a **Excel** y **PDF**. |
+| Internacionalización | Español, inglés, japonés y chino mediante `MessageSource`. |
 
 > [!NOTE]
-> Las tecnologías marcadas como **Preparación** se actualizarán cuando su implementación quede integrada y validada en la rama principal.
+> Autenticación real con Spring Security (login, roles aplicados vía `securityFilterChain`) y el módulo de devoluciones/trazabilidad todavía están en integración — ver issues abiertos del milestone vigente.
+
+---
+
+## 🛠️ Tecnologías
+
+| Área | Tecnología |
+|---|---|
+| Lenguaje | Java 21 |
+| Framework | Spring Boot 4 |
+| Arquitectura | MVC (`domain` → `repository` → `service` → `controller`) |
+| Vistas | Thymeleaf + fragmentos reutilizables |
+| Interfaz | Bootstrap 5 y Font Awesome vía WebJars |
+| Persistencia | Spring Data JPA + Hibernate |
+| Base de datos | MySQL (esquema y datos por scripts SQL versionados, sin `ddl-auto`) |
+| Reportes | Apache POI (Excel) y OpenPDF (PDF) |
+| Construcción | Maven Wrapper (`mvnw` / `mvnw.cmd`) |
+| Control de versiones | Git y GitHub |
+
+---
+
+## 🚀 Cómo ejecutar el proyecto
+
+**Requisitos:** JDK 21 y acceso a una base de datos MySQL.
+
+1. Configurar la conexión en `src/main/resources/application.properties` (`spring.datasource.url`, `username`, `password`).
+2. Crear el esquema ejecutando, en orden, los scripts de `src/main/resources/sql/schema/` (numerados: `01_...` a `12_...`).
+3. Cargar datos de ejemplo ejecutando, en el mismo orden, los scripts de `src/main/resources/sql/seed/`.
+4. Compilar y ejecutar:
+
+   ```bash
+   # Windows
+   .\mvnw.cmd spring-boot:run
+
+   # Linux/macOS
+   ./mvnw spring-boot:run
+   ```
+
+5. La aplicación queda disponible en `http://localhost` (puerto 80, configurable en `application.properties`).
 
 ---
 
@@ -145,18 +81,50 @@ telecomtrack/
 ├── docs/
 │   └── avance1/
 ├── src/
+│   ├── main/java/com/telecomtrack/
+│   │   ├── controller/
+│   │   ├── domain/
+│   │   ├── dto/
+│   │   ├── repository/
+│   │   └── service/
+│   └── main/resources/
+│       ├── sql/schema/   # scripts DDL numerados
+│       ├── sql/seed/     # datos de ejemplo numerados
+│       ├── templates/    # vistas Thymeleaf por módulo
+│       └── messages*.properties
 ├── .gitignore
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 └── README.md
 ```
 
-- `docs/`: documentación y evidencias de cada entrega.
-- `src/`: código fuente de la aplicación.
-- `CONTRIBUTING.md`: flujo de trabajo, ramas, commits, issues y pull requests.
-- `CODE_OF_CONDUCT.md`: normas de convivencia y responsabilidad académica.
+---
 
-La estructura se actualizará conforme se incorpore la base oficial del proyecto Spring Boot.
+## 👥 Equipo
+
+Las responsabilidades se asignan y actualizan en cada avance según el backlog aprobado por el equipo.
+
+| Integrante | GitHub |
+|---|---|
+| Allan Fauricio Fonseca Batista | [@fauricio9656](https://github.com/fauricio9656) |
+| Carlos Roberto Pérez Rodríguez | [@ZerepSolrac412](https://github.com/ZerepSolrac412) |
+| Sebastián Segura Camacho | [@SebastianSC11](https://github.com/SebastianSC11) |
+| Alberto Manuel Zúñiga Sánchez | [@BetoxPrograming](https://github.com/BetoxPrograming) |
+
+---
+
+## 🔀 Flujo de Desarrollo
+
+La rama `main` contiene únicamente versiones estables y entregables. La rama `develop` se utiliza para integrar y probar el trabajo del equipo antes de actualizar `main`. Cada rama de trabajo (`feature/*`, `fix/*`) se crea desde la versión más reciente de `develop`.
+
+Al completar un issue:
+
+1. El responsable publica su rama.
+2. Abre un pull request hacia `develop`, relacionándolo con `Closes #<número>`.
+3. Documenta las pruebas realizadas y cualquier limitación conocida.
+4. Solicita la revisión correspondiente y atiende observaciones antes de integrar.
+
+Los pull requests creados por otros integrantes requieren la aprobación de **@BetoxPrograming**, administrador del flujo de integración. Los pull requests creados por **@BetoxPrograming** requieren la aprobación de al menos otro integrante.
 
 ---
 
@@ -170,3 +138,9 @@ Antes de realizar cambios, es obligatorio leer:
 - [Código de conducta](CODE_OF_CONDUCT.md)
 
 El incumplimiento de las normas académicas, técnicas o de colaboración puede poner en riesgo la entrega y será comunicado al docente cuando corresponda.
+
+---
+
+## 🙏 Reconocimientos
+
+Este README fue redactado con apoyo de **Claude (Anthropic)**.

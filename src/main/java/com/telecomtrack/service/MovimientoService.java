@@ -3,6 +3,7 @@ package com.telecomtrack.service;
 import com.telecomtrack.domain.Material;
 import com.telecomtrack.domain.Movimiento;
 import com.telecomtrack.domain.Proveedor;
+import com.telecomtrack.domain.Usuario;
 import com.telecomtrack.repository.MaterialRepository;
 import com.telecomtrack.repository.MovimientoRepository;
 import com.telecomtrack.repository.ProveedorRepository;
@@ -19,13 +20,16 @@ public class MovimientoService {
     private final MovimientoRepository movimientoRepository;
     private final MaterialRepository materialRepository;
     private final ProveedorRepository proveedorRepository;
+    private final NotificacionCorreoService notificacionCorreoService;
 
     public MovimientoService(MovimientoRepository movimientoRepository,
                               MaterialRepository materialRepository,
-                              ProveedorRepository proveedorRepository) {
+                              ProveedorRepository proveedorRepository,
+                              NotificacionCorreoService notificacionCorreoService) {
         this.movimientoRepository = movimientoRepository;
         this.materialRepository = materialRepository;
         this.proveedorRepository = proveedorRepository;
+        this.notificacionCorreoService = notificacionCorreoService;
     }
 
     public Movimiento registrarEntrada(Long idMaterial, Integer cantidad,
@@ -52,7 +56,8 @@ public class MovimientoService {
     }
 
     public Movimiento registrarSalida(Material material, Integer cantidad,
-                                       String observacion, String responsable) {
+                                       String observacion, String responsable,
+                                       Usuario tecnico) {
 
         if (cantidad == null || cantidad < 1 || material.getStockActual() < cantidad) {
             throw new IllegalStateException("solicitud.error.stockInsuficiente");
@@ -68,9 +73,12 @@ public class MovimientoService {
         movimiento.setObservacion(observacion);
         movimiento.setResponsable(responsable);
         movimiento.setMaterial(material);
+        movimiento.setTecnico(tecnico);
         movimiento.setProveedor(null);
 
-        return movimientoRepository.save(movimiento);
+        Movimiento movimientoGuardado = movimientoRepository.save(movimiento);
+        notificacionCorreoService.notificarStockMinimo(material);
+        return movimientoGuardado;
     }
 
     @Transactional(readOnly = true)
@@ -79,12 +87,10 @@ public class MovimientoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Movimiento> getMovimientosPorResponsable(String responsable) {
-        return movimientoRepository.findByResponsableOrderByFechaDesc(responsable);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Movimiento> getMovimientosSalidaPorResponsable(String responsable) {
-        return movimientoRepository.findByResponsableAndTipoOrderByFechaDesc(responsable, Movimiento.TIPO_SALIDA);
+    public List<Movimiento> getSalidasPorTecnico(Integer idTecnico) {
+        return movimientoRepository
+                .findByTecnicoIdUsuarioAndTipoOrderByFechaDesc(
+                        idTecnico,
+                        Movimiento.TIPO_SALIDA);
     }
 }

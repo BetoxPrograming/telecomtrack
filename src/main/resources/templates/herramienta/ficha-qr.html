@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{general/fragmentos :: head}"></head>
 
@@ -8,39 +9,49 @@
 <header th:replace="~{general/fragmentos :: header}"></header>
 
 <main class="container py-5">
-    <h1 class="mb-4" th:text="#{qr.titulo.ficha}"></h1>
+    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-4">
+        <div>
+            <h1 class="mb-1" th:text="#{qr.titulo.ficha}"></h1>
+            <p class="text-muted mb-0" th:text="#{qr.descripcion.ficha}"></p>
+        </div>
+        <a th:href="@{/herramienta/catalogo}"
+           class="btn btn-outline-secondary"
+           th:text="#{herramienta.titulo.catalogo}"></a>
+    </div>
 
     <div class="row g-4">
         <div class="col-lg-4">
             <div class="card shadow-sm">
                 <div class="card-body text-center">
-                    <img class="img-fluid mb-3" th:src="@{/qr/herramienta/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}" alt="QR">
+                    <img class="img-fluid mb-3"
+                         th:src="@{/qr/herramienta/{idHerramienta}(idHerramienta=${herramienta.idHerramienta})}"
+                         th:alt="#{qr.titulo.codigo}">
+                    <div class="fw-semibold" th:text="${herramienta.nombre}"></div>
                     <div class="small text-muted" th:text="${herramienta.codigo}"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-lg-8">
             <div th:replace="~{herramienta/fragmentos :: fichaHerramienta(herramienta=${herramienta})}"></div>
 
             <div class="card shadow-sm mb-3" th:if="${ultimaAsignacion != null}">
                 <div class="card-body">
-                    <h2 class="h5" th:text="#{asignacion.titulo}"></h2>
-                    <p class="mb-1"><strong th:text="#{asignacion.tecnico}"></strong>: <span th:text="${ultimaAsignacion.tecnico.nombre + ' ' + ultimaAsignacion.tecnico.apellido}"></span></p>
-                    <p class="mb-1"><strong th:text="#{asignacion.proyecto}"></strong>: <span th:text="${ultimaAsignacion.proyecto.nombre}"></span></p>
-                    <p class="mb-0"><strong th:text="#{campo.fecha.asignacion}"></strong>: <span th:text="${ultimaAsignacion.fechaAsignacion}"></span></p>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mb-3">
-                <div class="card-body">
-                    <h2 class="h5" th:text="#{qr.accion.ver}"></h2>
-                    <a class="btn btn-primary" th:href="@{/devolucion/nueva}" th:text="#{devolucion.accion.registrar}"></a>
+                    <h2 class="h5" th:text="#{qr.titulo.ultimaAsignacion}"></h2>
+                    <p class="mb-1">
+                        <strong th:text="#{asignacion.proyecto}"></strong>:
+                        <span th:text="${ultimaAsignacion.proyecto.nombre}"></span>
+                    </p>
+                    <p class="mb-0">
+                        <strong th:text="#{campo.fecha.asignacion}"></strong>:
+                        <span th:text="${ultimaAsignacion.fechaAsignacion}"></span>
+                    </p>
                 </div>
             </div>
 
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h2 class="h5 mb-3" th:text="#{devolucion.titulo.historial}"></h2>
+                    <h2 class="h5 mb-3" th:text="#{qr.titulo.historialReciente}"></h2>
                     <div class="table-responsive">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
@@ -52,7 +63,11 @@
                             <tbody>
                             <tr th:each="devolucion : ${historialReciente}">
                                 <td th:text="${devolucion.fechaDevolucion}"></td>
-                                <td th:text="${devolucion.estadoDevolucion}"></td>
+                                <td>
+                                    <span th:if="${devolucion.estadoDevolucion == 'Buena'}" th:text="#{devolucion.estado.buena}"></span>
+                                    <span th:if="${devolucion.estadoDevolucion == 'Dañada'}" th:text="#{devolucion.estado.danada}"></span>
+                                    <span th:if="${devolucion.estadoDevolucion == 'Perdida'}" th:text="#{devolucion.estado.perdida}"></span>
+                                </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(historialReciente)}">
                                 <td colspan="2" class="text-center" th:text="#{devolucion.mensaje.sin-registros}"></td>
@@ -61,6 +76,12 @@
                         </table>
                     </div>
                 </div>
+            </div>
+
+            <div class="mt-3" sec:authorize="hasRole('Técnico')">
+                <a class="btn btn-primary"
+                   th:href="@{/devolucion/nueva}"
+                   th:text="#{devolucion.accion.registrar}"></a>
             </div>
         </div>
     </div>

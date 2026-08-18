@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="fa-solid fa-gauge-high text-primary me-2"></i>
+            <span th:text="#{dashboard.supervisor.titulo}">Dashboard del supervisor</span>
+        </h2>
+    </div>
+
+    <div class="alert alert-light border mb-4">
+        <i class="fa-solid fa-user-check me-2"></i>
+        <strong th:text="${supervisor.nombre + ' ' + supervisor.apellido}"></strong>
+    </div>
+
+    <div th:if="${resumen != null and #lists.isEmpty(resumen.misProyectos)}" class="alert alert-info" th:text="#{dashboard.supervisor.sinProyectos}">
+        This supervisor has no projects assigned.
+    </div>
+
+    <div th:if="${resumen != null}">
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 fw-bold text-info" th:text="${#lists.size(resumen.misProyectos)}"></div>
+                        <div class="small text-muted" th:text="#{dashboard.tarjeta.proyectosActivos}">Proyectos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 fw-bold text-success" th:text="${resumen.herramientasDisponibles}"></div>
+                        <div class="small text-muted" th:text="#{dashboard.tarjeta.herramientasDisponibles}">Herramientas disponibles</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 fw-bold text-primary" th:text="${#lists.size(resumen.elementosEnUso)}"></div>
+                        <div class="small text-muted" th:text="#{dashboard.supervisor.elementosEnUso}">Elements in use</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 fw-bold text-danger" th:text="${#lists.size(resumen.materialesStockCritico)}"></div>
+                        <div class="small text-muted" th:text="#{dashboard.tarjeta.materialesStockCritico}">Materiales con stock crítico</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold" th:text="#{proyecto.titulo.listado}">Proyectos</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th th:text="#{campo.nombre}">Nombre</th>
+                        <th th:text="#{campo.estado}">Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${resumen.misProyectos}">
+                        <td th:text="${p.nombre}"></td>
+                        <td th:text="${p.estado}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(resumen.materialesStockCritico)}" class="alert alert-warning border-start border-warning border-4 mb-4">
+            <h6 class="alert-heading fw-bold mb-2">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                <span th:text="#{mat.alerta.titulo}">Alerta de stock mínimo</span>
+            </h6>
+            <ul class="mb-0 small">
+                <li th:each="m : ${resumen.materialesStockCritico}">
+                    <strong th:text="${m.nombre}"></strong>
+                    &mdash; <span th:text="#{mat.alerta.stockActual}">Stock actual:</span>
+                    <span class="text-danger fw-bold" th:text="${m.stockActual}"></span>
+                    / <span th:text="#{mat.alerta.minimo}">Mínimo:</span>
+                    <span th:text="${m.stockMinimo}"></span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold" th:text="#{dashboard.movimientos.titulo}">Últimos movimientos</h6>
+            </div>
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(resumen.actividadReciente)}" class="text-center py-4 text-muted">
+                    <span th:text="#{dashboard.movimientos.vacio}">No hay movimientos registrados.</span>
+                </div>
+                <div class="table-responsive" th:if="${not #lists.isEmpty(resumen.actividadReciente)}">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th th:text="#{solicitud.campo.fecha}">Fecha</th>
+                            <th th:text="#{asignacion.proyecto}">Proyecto</th>
+                            <th th:text="#{campo.estado}">Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="s : ${resumen.actividadReciente}">
+                            <td th:text="${#temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${s.proyecto.nombre}"></td>
+                            <td>
+                                <span th:switch="${s.estado}">
+                                    <span th:case="'PENDIENTE'" class="badge bg-warning text-dark" th:text="#{solicitud.estado.pendiente}"></span>
+                                    <span th:case="'APROBADA'" class="badge bg-success" th:text="#{solicitud.estado.aprobada}"></span>
+                                    <span th:case="'RECHAZADA'" class="badge bg-danger" th:text="#{solicitud.estado.rechazada}"></span>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

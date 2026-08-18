@@ -81,6 +81,32 @@
 
         <div class="mb-3">
 
+            <label for="password"
+                   class="form-label"
+                   th:text="#{campo.password}">
+            </label>
+
+            <input type="password"
+                   id="password"
+                   class="form-control"
+                   th:field="*{password}"
+                   th:errorclass="is-invalid"
+                   autocomplete="new-password">
+
+            <div class="form-text"
+                 th:if="${usuario.idUsuario != null}"
+                 th:text="#{usuario.password.ayuda}">
+            </div>
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('password')}"
+                 th:errors="*{password}">
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
             <label for="rol"
                    class="form-label"
                    th:text="#{campo.rol}">
@@ -109,6 +135,10 @@
 
                 <option value="Supervisor"
                         th:text="#{rol.supervisor}">
+                </option>
+
+                <option value="Visitante"
+                        th:text="#{rol.visitante}">
                 </option>
 
             </select>

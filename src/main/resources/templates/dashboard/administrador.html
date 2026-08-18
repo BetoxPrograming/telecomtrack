@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"></head>
+<body class="bg-light">
+<header th:replace="~{general/fragmentos :: header}"></header>
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="fa-solid fa-gauge-high text-primary me-2"></i>
+            <span th:text="#{dashboard.titulo}">Dashboard</span>
+        </h2>
+        <a th:href="@{/reportes}" class="btn btn-outline-primary">
+            <i class="fa-solid fa-file-lines me-1"></i>
+            <span th:text="#{reporte.menu.titulo}">Reportes</span>
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-success" th:text="${resumen.herramientasDisponibles}"></div>
+                    <div class="small text-muted" th:text="#{dashboard.tarjeta.herramientasDisponibles}">Herramientas disponibles</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-primary" th:text="${resumen.herramientasEnUso}"></div>
+                    <div class="small text-muted" th:text="#{dashboard.tarjeta.herramientasEnUso}">Herramientas en uso</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-danger" th:text="${#lists.size(resumen.materialesStockCritico)}"></div>
+                    <div class="small text-muted" th:text="#{dashboard.tarjeta.materialesStockCritico}">Materiales con stock crítico</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-warning" th:text="${resumen.solicitudesPendientes}"></div>
+                    <div class="small text-muted" th:text="#{dashboard.tarjeta.solicitudesPendientes}">Solicitudes pendientes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="display-6 fw-bold text-info" th:text="${resumen.proyectosActivos}"></div>
+                    <div class="small text-muted" th:text="#{dashboard.tarjeta.proyectosActivos}">Proyectos activos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(resumen.materialesStockCritico)}" class="alert alert-warning border-start border-warning border-4 mb-4">
+        <h6 class="alert-heading fw-bold mb-2">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{mat.alerta.titulo}">Alerta de stock mínimo</span>
+        </h6>
+        <ul class="mb-0 small">
+            <li th:each="m : ${resumen.materialesStockCritico}">
+                <strong th:text="${m.nombre}"></strong>
+                &mdash; <span th:text="#{mat.alerta.stockActual}">Stock actual:</span>
+                <span class="text-danger fw-bold" th:text="${m.stockActual}"></span>
+                / <span th:text="#{mat.alerta.minimo}">Mínimo:</span>
+                <span th:text="${m.stockMinimo}"></span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h6 class="mb-0 fw-bold" th:text="#{dashboard.movimientos.titulo}">Últimos movimientos</h6>
+        </div>
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(resumen.ultimosMovimientos)}" class="text-center py-4 text-muted">
+                <span th:text="#{dashboard.movimientos.vacio}">No hay movimientos registrados.</span>
+            </div>
+            <div class="table-responsive" th:if="${not #lists.isEmpty(resumen.ultimosMovimientos)}">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th th:text="#{mat.entrada.historial.fecha}">Fecha</th>
+                        <th th:text="#{mat.entrada.historial.tipo}">Tipo</th>
+                        <th th:text="#{mat.col.nombre}">Material</th>
+                        <th class="text-center" th:text="#{mat.entrada.historial.cantidad}">Cantidad</th>
+                        <th th:text="#{mat.entrada.responsable}">Responsable</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="mov : ${resumen.ultimosMovimientos}">
+                        <td th:text="${#temporals.format(mov.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                                <span class="badge"
+                                      th:classappend="${mov.tipo == 'ENTRADA'} ? 'bg-success' : 'bg-secondary'"
+                                      th:text="${mov.tipo}">
+                                </span>
+                        </td>
+                        <td th:text="${mov.material.nombre}"></td>
+                        <td class="text-center" th:text="${mov.cantidad}"></td>
+                        <td th:text="${mov.responsable}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+<div th:replace="~{general/fragmentos :: scripts}"></div>
+</body>
+</html>

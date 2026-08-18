@@ -14,4 +14,10 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
     List<Solicitud> findByEstadoOrderByFechaSolicitudAsc(String estado);
 
     List<Solicitud> findAllByOrderByFechaSolicitudDesc();
+
+    long countByEstado(String estado);
+
+    List<Solicitud> findTop10ByProyectoSupervisorIdUsuarioOrderByFechaSolicitudDesc(Integer idSupervisor);
+
+    List<Solicitud> findByProyectoIdProyectoAndEstado(Integer idProyecto, String estado);
 }

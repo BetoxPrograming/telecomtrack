@@ -20,6 +20,7 @@
                 <th th:text="#{campo.nombre}"></th>
                 <th th:text="#{campo.categoria}"></th>
                 <th th:text="#{campo.disponibilidad}"></th>
+                <th th:text="#{qr.titulo.codigo}"></th>
             </tr>
             </thead>
             <tbody>
@@ -30,9 +31,14 @@
                 <td>
                     <span th:replace="~{herramienta/fragmentos :: disponibilidadPublica(estado=${herramienta.estado})}"></span>
                 </td>
+                <td>
+                    <a th:href="@{/qr/herramienta/{idHerramienta}/ficha(idHerramienta=${herramienta.idHerramienta})}"
+                       class="btn btn-outline-primary btn-sm"
+                       th:text="#{qr.accion.ver}"></a>
+                </td>
             </tr>
             <tr th:if="${#lists.isEmpty(herramientas)}">
-                <td colspan="4" class="text-center" th:text="#{herramienta.mensaje.sin-registros}"></td>
+                <td colspan="5" class="text-center" th:text="#{herramienta.mensaje.sin-registros}"></td>
             </tr>
             </tbody>
         </table>

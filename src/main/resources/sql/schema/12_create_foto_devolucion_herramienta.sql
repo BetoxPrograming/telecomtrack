@@ -1,13 +1,3 @@
-USE telecomtrack;
-
-CREATE TABLE IF NOT EXISTS foto_devolucion_herramienta (
-    id_foto_devolucion INT AUTO_INCREMENT,
-    id_devolucion INT NOT NULL,
-    ruta_imagen VARCHAR(500) NOT NULL,
-    nombre_archivo VARCHAR(255) NOT NULL,
-    fecha_carga DATETIME NOT NULL,
-    PRIMARY KEY (id_foto_devolucion),
-    CONSTRAINT fk_foto_devolucion
-        FOREIGN KEY (id_devolucion)
-        REFERENCES devolucion_herramienta (id_devolucion)
-);
+-- Script obsoleto conservado únicamente para neutralizar la versión antigua
+-- de la rama feature/returns-traceability-qr.
+-- La tabla de fotografías se crea en 15_create_foto_devolucion_herramienta.sql.

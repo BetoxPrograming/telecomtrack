@@ -23,6 +23,7 @@ public class SolicitudService {
     private final MaterialRepository materialRepository;
     private final MovimientoService movimientoService;
     private final AsignacionHerramientaService asignacionHerramientaService;
+    private final NotificacionCorreoService notificacionCorreoService;
 
     public SolicitudService(SolicitudRepository solicitudRepository,
                              DetalleSolicitudRepository detalleSolicitudRepository,
@@ -32,7 +33,8 @@ public class SolicitudService {
                              HerramientaRepository herramientaRepository,
                              MaterialRepository materialRepository,
                              MovimientoService movimientoService,
-                             AsignacionHerramientaService asignacionHerramientaService) {
+                             AsignacionHerramientaService asignacionHerramientaService,
+                             NotificacionCorreoService notificacionCorreoService) {
         this.solicitudRepository = solicitudRepository;
         this.detalleSolicitudRepository = detalleSolicitudRepository;
         this.usuarioRepository = usuarioRepository;
@@ -42,6 +44,7 @@ public class SolicitudService {
         this.materialRepository = materialRepository;
         this.movimientoService = movimientoService;
         this.asignacionHerramientaService = asignacionHerramientaService;
+        this.notificacionCorreoService = notificacionCorreoService;
     }
 
     @Transactional
@@ -105,6 +108,7 @@ public class SolicitudService {
             }
         }
 
+        notificacionCorreoService.notificarNuevaSolicitud(solicitud);
         return solicitud;
     }
 
@@ -168,7 +172,8 @@ public class SolicitudService {
                         detalle.getMaterial(),
                         detalle.getCantidad(),
                         observacion,
-                        bodeguero.getNombre() + " " + bodeguero.getApellido());
+                        bodeguero.getNombre() + " " + bodeguero.getApellido(),
+                        solicitud.getTecnico());
 
             } else if (detalle.getHerramienta() != null) {
 

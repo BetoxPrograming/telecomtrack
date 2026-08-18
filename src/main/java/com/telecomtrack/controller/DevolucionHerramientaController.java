@@ -1,129 +1,144 @@
 package com.telecomtrack.controller;
 
-import com.telecomtrack.domain.DevolucionHerramienta;
+import com.telecomtrack.domain.FotoDevolucionHerramienta;
+import com.telecomtrack.domain.Usuario;
 import com.telecomtrack.service.DevolucionHerramientaService;
-import com.telecomtrack.service.ProyectoService;
-import com.telecomtrack.service.UsuarioActualService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.telecomtrack.service.UsuarioService;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/devolucion")
 public class DevolucionHerramientaController {
 
     private final DevolucionHerramientaService devolucionHerramientaService;
-    private final UsuarioActualService usuarioActualService;
-    private final ProyectoService proyectoService;
+    private final UsuarioService usuarioService;
     private final MessageSource messageSource;
 
     public DevolucionHerramientaController(
             DevolucionHerramientaService devolucionHerramientaService,
-            UsuarioActualService usuarioActualService,
-            ProyectoService proyectoService,
+            UsuarioService usuarioService,
             MessageSource messageSource) {
 
         this.devolucionHerramientaService = devolucionHerramientaService;
-        this.usuarioActualService = usuarioActualService;
-        this.proyectoService = proyectoService;
+        this.usuarioService = usuarioService;
         this.messageSource = messageSource;
     }
 
+    private Usuario getUsuarioAutenticado(Principal principal) {
+        return usuarioService.getUsuarioPorCorreoActivo(principal.getName());
+    }
+
     @GetMapping("/nueva")
-    public String nueva(
-            HttpServletRequest request,
-            Model model,
-            RedirectAttributes redirectAttributes,
-            Locale locale) {
-
-        var tecnico = usuarioActualService.getUsuarioAutenticado(request);
-
-        if (tecnico == null) {
-            agregarMensaje(redirectAttributes, "devolucion.error.autenticacion", "danger", locale);
-            return "redirect:/";
-        }
-
-        model.addAttribute("tecnico", tecnico);
-        model.addAttribute("asignaciones", devolucionHerramientaService.getAsignacionesActivasDeTecnico(tecnico.getIdUsuario()));
-        model.addAttribute("estadosDevolucion", estadosDevolucion());
-        model.addAttribute("idiomaRuta", "/devolucion/nueva");
+    public String nueva(Principal principal, Model model) {
+        Usuario tecnico = getUsuarioAutenticado(principal);
+        cargarFormulario(model, tecnico);
         return "devolucion/nueva";
     }
 
     @PostMapping("/guardar")
     public String guardar(
-            HttpServletRequest request,
+            Principal principal,
             @RequestParam Integer idAsignacion,
             @RequestParam String estadoDevolucion,
+            @RequestParam(required = false) LocalDate fechaRetornoEstimada,
+            @RequestParam(required = false) String justificacionBaja,
             @RequestParam(required = false) List<MultipartFile> fotos,
             Model model,
             RedirectAttributes redirectAttributes,
             Locale locale) {
 
-        var tecnico = usuarioActualService.getUsuarioAutenticado(request);
-
-        if (tecnico == null) {
-            agregarMensaje(redirectAttributes, "devolucion.error.autenticacion", "danger", locale);
-            return "redirect:/";
-        }
+        Usuario tecnico = getUsuarioAutenticado(principal);
 
         try {
-            DevolucionHerramienta devolucion = devolucionHerramientaService.registrarDevolucion(
+            devolucionHerramientaService.registrarDevolucion(
                     idAsignacion,
                     tecnico.getIdUsuario(),
                     estadoDevolucion,
+                    fechaRetornoEstimada,
+                    justificacionBaja,
                     fotos == null ? new ArrayList<>() : fotos);
 
-            agregarMensaje(redirectAttributes, "devolucion.mensaje.guardada", "success", locale);
+            agregarMensaje(
+                    redirectAttributes,
+                    "devolucion.mensaje.guardada",
+                    "success",
+                    locale);
+
             return "redirect:/devolucion/historial";
 
-        } catch (IllegalStateException exception) {
-            model.addAttribute("tecnico", tecnico);
-            model.addAttribute("asignaciones", devolucionHerramientaService.getAsignacionesActivasDeTecnico(tecnico.getIdUsuario()));
-            model.addAttribute("estadosDevolucion", estadosDevolucion());
-            model.addAttribute("errorGeneral", messageSource.getMessage(exception.getMessage(), null, locale));
-            model.addAttribute("idiomaRuta", "/devolucion/nueva");
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            cargarFormulario(model, tecnico);
+            model.addAttribute(
+                    "errorGeneral",
+                    messageSource.getMessage(
+                            exception.getMessage(),
+                            null,
+                            exception.getMessage(),
+                            locale));
             return "devolucion/nueva";
         }
     }
 
     @GetMapping("/historial")
     public String historial(
-            HttpServletRequest request,
+            Principal principal,
             @RequestParam(required = false) Integer idProyecto,
             @RequestParam(required = false) LocalDate fechaInicio,
             @RequestParam(required = false) LocalDate fechaFin,
-            Model model,
-            RedirectAttributes redirectAttributes,
-            Locale locale) {
+            Model model) {
 
-        var tecnico = usuarioActualService.getUsuarioAutenticado(request);
+        Usuario tecnico = getUsuarioAutenticado(principal);
 
-        if (tecnico == null) {
-            agregarMensaje(redirectAttributes, "devolucion.error.autenticacion", "danger", locale);
-            return "redirect:/";
+        var devoluciones = devolucionHerramientaService.getHistorialTecnico(
+                tecnico.getIdUsuario(),
+                idProyecto,
+                fechaInicio,
+                fechaFin);
+
+        Map<Integer, List<FotoDevolucionHerramienta>> fotosPorDevolucion = new LinkedHashMap<>();
+
+        for (var devolucion : devoluciones) {
+            fotosPorDevolucion.put(
+                    devolucion.getIdDevolucion(),
+                    devolucionHerramientaService.getFotos(devolucion.getIdDevolucion()));
         }
 
-        model.addAttribute("proyectos", proyectoService.getProyectosActivos());
-        model.addAttribute("devoluciones", devolucionHerramientaService.getHistorialTecnico(tecnico.getIdUsuario(), idProyecto, fechaInicio, fechaFin));
+        model.addAttribute(
+                "proyectos",
+                devolucionHerramientaService.getProyectosTecnico(tecnico.getIdUsuario()));
+        model.addAttribute("devoluciones", devoluciones);
+        model.addAttribute("fotosPorDevolucion", fotosPorDevolucion);
         model.addAttribute("idProyecto", idProyecto);
         model.addAttribute("fechaInicio", fechaInicio);
         model.addAttribute("fechaFin", fechaFin);
         model.addAttribute("idiomaRuta", "/devolucion/historial");
         return "devolucion/historial";
+    }
+
+    private void cargarFormulario(Model model, Usuario tecnico) {
+        model.addAttribute("tecnico", tecnico);
+        model.addAttribute(
+                "asignaciones",
+                devolucionHerramientaService
+                        .getAsignacionesActivasDeTecnico(tecnico.getIdUsuario()));
+        model.addAttribute("estadosDevolucion", estadosDevolucion());
+        model.addAttribute("idiomaRuta", "/devolucion/nueva");
     }
 
     private List<String> estadosDevolucion() {
@@ -140,7 +155,9 @@ public class DevolucionHerramientaController {
             String tipo,
             Locale locale) {
 
-        redirectAttributes.addFlashAttribute("mensaje", messageSource.getMessage(codigo, null, locale));
+        redirectAttributes.addFlashAttribute(
+                "mensaje",
+                messageSource.getMessage(codigo, null, codigo, locale));
         redirectAttributes.addFlashAttribute("tipoMensaje", tipo);
     }
 }

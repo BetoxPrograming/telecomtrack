@@ -1,0 +1,3 @@
+codigo,nombre,descripcion,unidad_medida,stock_actual,stock_minimo,valor_unitario,categoria,proveedor,ubicacion
+IMP-M-001,Cinta aislante,"Cinta PVC negra",rollos,20,5,1250.00,Cables y Conectores,Distribuidora TeleCR,Bodega de Materiales
+IMP-M-002,Patch cord Cat6,"Patch cord de un metro",unidades,15,4,2350.00,Cables y Conectores,ImportaRed S.A.,Bodega Central

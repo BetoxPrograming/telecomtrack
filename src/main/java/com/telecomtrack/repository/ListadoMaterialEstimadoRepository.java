@@ -12,4 +12,7 @@ public interface ListadoMaterialEstimadoRepository extends JpaRepository<Listado
     List<ListadoMaterialEstimado> findByProyectoIdProyectoOrderByFechaCreacionDesc(Integer idProyecto);
 
     List<ListadoMaterialEstimado> findByEstadoOrderByFechaCreacionAsc(String estado);
+
+    List<ListadoMaterialEstimado> findByEstadoAndProyectoSupervisorIdUsuarioOrderByFechaCreacionAsc(
+            String estado, Integer idSupervisor);
 }

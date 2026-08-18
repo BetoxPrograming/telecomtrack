@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head">
     <meta charset="UTF-8">
@@ -11,35 +12,99 @@
 </head>
 
 <header th:fragment="header" class="bg-dark text-white p-3">
-    <div class="container d-flex justify-content-between align-items-center">
+    <div class="container d-flex justify-content-between align-items-center gap-2 flex-wrap">
         <a th:href="@{/}" class="text-white text-decoration-none">TelecomTrack</a>
 
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
             <a th:href="@{/herramienta/catalogo}" class="btn btn-outline-light btn-sm">
                 <span th:text="#{herramienta.titulo.catalogo}"></span>
             </a>
-            <a th:href="@{/devolucion/nueva}" class="btn btn-outline-light btn-sm">
+
+            <a sec:authorize="hasRole('Técnico')"
+               th:href="@{/devolucion/nueva}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-rotate-left"></i>
                 <span th:text="#{devolucion.accion.registrar}"></span>
             </a>
-            <a th:href="@{/devolucion/historial}" class="btn btn-outline-light btn-sm">
+
+            <a sec:authorize="hasRole('Técnico')"
+               th:href="@{/devolucion/historial}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-clock-rotate-left"></i>
                 <span th:text="#{devolucion.accion.historial}"></span>
             </a>
-            <a th:href="@{/historial-material}" class="btn btn-outline-light btn-sm">
-                <span th:text="#{historial.material.titulo}"></span>
+
+            <a sec:authorize="hasRole('Técnico')"
+               th:href="@{/historial-material}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span th:text="#{historial.material.accion}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Administrador')"
+               th:href="@{/notificacion/configuracion}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-envelope"></i>
+                <span th:text="#{notificacion.accion.menu}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Bodeguero')"
+               th:href="@{/inventario/importar}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-file-import"></i>
+                <span th:text="#{importacion.accion.menu}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Bodeguero')"
+               th:href="@{/dashboard}"
+               class="btn btn-outline-light btn-sm">
+                <span th:text="#{dashboard.titulo}"></span>
+            </a>
+
+            <a sec:authorize="hasRole('Supervisor')"
+               th:href="@{/dashboard/supervisor}"
+               class="btn btn-outline-light btn-sm">
+                <span th:text="#{dashboard.supervisor.titulo}"></span>
             </a>
         </div>
 
-        <div class="dropdown" th:with="rutaIdioma=${idiomaRuta != null ? idiomaRuta : '/'}">
-            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Idioma
-            </button>
+        <div class="d-flex align-items-center gap-2">
 
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=es'">Español</a></li>
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=en'">English</a></li>
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=ja'">日本語</a></li>
-                <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=zh'">中文</a></li>
-            </ul>
+            <div class="dropdown" th:with="rutaIdioma=${idiomaRuta != null ? idiomaRuta : '/'}">
+                <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Idioma
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=es'">Español</a></li>
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=en'">English</a></li>
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=ja'">日本語</a></li>
+                    <li><a class="dropdown-item" th:href="${rutaIdioma} + '?lang=zh'">中文</a></li>
+                </ul>
+            </div>
+
+            <a sec:authorize="isAnonymous()"
+               th:href="@{/login}"
+               class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span th:text="#{seguridad.accion.ingresar}"></span>
+            </a>
+
+            <div sec:authorize="isAuthenticated()"
+                 class="d-flex align-items-center gap-2">
+
+                <span class="small"
+                      sec:authentication="name"></span>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit"
+                            class="btn btn-outline-light btn-sm">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span th:text="#{seguridad.accion.salir}"></span>
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
 </header>

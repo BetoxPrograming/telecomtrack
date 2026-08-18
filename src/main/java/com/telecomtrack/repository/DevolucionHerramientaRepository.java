@@ -15,13 +15,39 @@ public interface DevolucionHerramientaRepository
 
     List<DevolucionHerramienta> findAllByOrderByFechaDevolucionDesc();
 
-    List<DevolucionHerramienta> findByAsignacionHerramientaTecnicoIdUsuarioOrderByFechaDevolucionDesc(Integer idTecnico);
+    List<DevolucionHerramienta>
+    findByAsignacionHerramientaProyectoIdProyectoOrderByFechaDevolucionDesc(Integer idProyecto);
 
-    List<DevolucionHerramienta> findTop5ByAsignacionHerramientaHerramientaIdHerramientaOrderByFechaDevolucionDesc(Integer idHerramienta);
+    List<DevolucionHerramienta>
+    findByFechaDevolucionBetweenOrderByFechaDevolucionDesc(LocalDate fechaInicio, LocalDate fechaFin);
 
-    List<DevolucionHerramienta> findByAsignacionHerramientaTecnicoIdUsuarioAndAsignacionHerramientaProyectoIdProyectoOrderByFechaDevolucionDesc(Integer idTecnico, Integer idProyecto);
+    List<DevolucionHerramienta>
+    findByAsignacionHerramientaProyectoIdProyectoAndFechaDevolucionBetweenOrderByFechaDevolucionDesc(
+            Integer idProyecto,
+            LocalDate fechaInicio,
+            LocalDate fechaFin);
 
-    List<DevolucionHerramienta> findByAsignacionHerramientaTecnicoIdUsuarioAndFechaDevolucionBetweenOrderByFechaDevolucionDesc(Integer idTecnico, LocalDate fechaInicio, LocalDate fechaFin);
+    List<DevolucionHerramienta>
+    findByAsignacionHerramientaTecnicoIdUsuarioOrderByFechaDevolucionDesc(Integer idTecnico);
 
-    List<DevolucionHerramienta> findByAsignacionHerramientaTecnicoIdUsuarioAndAsignacionHerramientaProyectoIdProyectoAndFechaDevolucionBetweenOrderByFechaDevolucionDesc(Integer idTecnico, Integer idProyecto, LocalDate fechaInicio, LocalDate fechaFin);
+    List<DevolucionHerramienta>
+    findTop5ByAsignacionHerramientaHerramientaIdHerramientaOrderByFechaDevolucionDesc(Integer idHerramienta);
+
+    List<DevolucionHerramienta>
+    findByAsignacionHerramientaTecnicoIdUsuarioAndAsignacionHerramientaProyectoIdProyectoOrderByFechaDevolucionDesc(
+            Integer idTecnico,
+            Integer idProyecto);
+
+    List<DevolucionHerramienta>
+    findByAsignacionHerramientaTecnicoIdUsuarioAndFechaDevolucionBetweenOrderByFechaDevolucionDesc(
+            Integer idTecnico,
+            LocalDate fechaInicio,
+            LocalDate fechaFin);
+
+    List<DevolucionHerramienta>
+    findByAsignacionHerramientaTecnicoIdUsuarioAndAsignacionHerramientaProyectoIdProyectoAndFechaDevolucionBetweenOrderByFechaDevolucionDesc(
+            Integer idTecnico,
+            Integer idProyecto,
+            LocalDate fechaInicio,
+            LocalDate fechaFin);
 }
