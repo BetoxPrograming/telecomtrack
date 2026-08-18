@@ -20,6 +20,13 @@
                 <span th:text="#{herramienta.titulo.catalogo}"></span>
             </a>
 
+            <a sec:authorize="hasRole('Administrador')"
+               th:href="@{/notificacion/configuracion}"
+               class="btn btn-outline-light btn-sm">
+                <i class="fa-solid fa-envelope"></i>
+                <span th:text="#{notificacion.accion.menu}"></span>
+            </a>
+
             <a sec:authorize="hasRole('Bodeguero')"
                th:href="@{/inventario/importar}"
                class="btn btn-outline-light btn-sm">

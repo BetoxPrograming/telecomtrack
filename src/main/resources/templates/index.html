@@ -32,6 +32,18 @@
             </div>
         </div>
 
+        <div class="col-md-4" sec:authorize="hasRole('Administrador')">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h4 card-title" th:text="#{notificacion.titulo}"></h2>
+                    <p class="card-text text-muted" th:text="#{notificacion.descripcion.corta}"></p>
+                    <a th:href="@{/notificacion/configuracion}"
+                       class="btn btn-primary mt-auto"
+                       th:text="#{notificacion.accion.menu}"></a>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-4" sec:authorize="hasRole('Bodeguero')">
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">

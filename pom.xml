@@ -219,6 +219,16 @@
         </dependency>
 
         <!--
+            Spring Mail.
+            Se utiliza para el envío de notificaciones por correo electrónico.
+            La configuración sensible se recibe mediante variables de entorno.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!--
             Apache POI (OOXML).
             Sirve para generar archivos Excel (.xlsx).
             Se usa en los reportes finales para exportar tablas a Excel.
