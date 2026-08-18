@@ -25,25 +25,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-            <form method="get" th:action="@{/solicitud/mis-solicitudes}" class="row g-3 align-items-end">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{asignacion.tecnico}">Tecnico</label>
-                    <select name="tecnicoId" class="form-select" onchange="this.form.submit()">
-                        <option value="" th:text="#{rol.seleccionar}">-- Seleccione --</option>
-                        <option th:each="t : ${tecnicos}"
-                                th:value="${t.idUsuario}"
-                                th:text="${t.nombre + ' ' + t.apellido}"
-                                th:selected="${tecnicoId != null and tecnicoId == t.idUsuario}">
-                        </option>
-                    </select>
-                </div>
-            </form>
-        </div>
+    <div class="alert alert-light border mb-4">
+        <i class="fa-solid fa-user me-2"></i>
+        <strong th:text="${tecnico.nombre + ' ' + tecnico.apellido}"></strong>
     </div>
 
-    <div class="card shadow-sm border-0" th:if="${tecnicoId != null}">
+    <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div th:if="${#lists.isEmpty(solicitudes)}" class="text-center py-5 text-muted">
                 <i class="fa-solid fa-inbox fa-3x mb-3 d-block"></i>

@@ -12,22 +12,9 @@
         </h2>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-            <form method="get" th:action="@{/dashboard/supervisor}" class="row g-3 align-items-end">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{rol.supervisor}">Supervisor</label>
-                    <select name="supervisorId" class="form-select" onchange="this.form.submit()">
-                        <option value="" th:text="#{rol.seleccionar}">-- Seleccione --</option>
-                        <option th:each="s : ${supervisores}"
-                                th:value="${s.idUsuario}"
-                                th:text="${s.nombre + ' ' + s.apellido}"
-                                th:selected="${supervisorId != null and supervisorId == s.idUsuario}">
-                        </option>
-                    </select>
-                </div>
-            </form>
-        </div>
+    <div class="alert alert-light border mb-4">
+        <i class="fa-solid fa-user-check me-2"></i>
+        <strong th:text="${supervisor.nombre + ' ' + supervisor.apellido}"></strong>
     </div>
 
     <div th:if="${resumen != null and #lists.isEmpty(resumen.misProyectos)}" class="alert alert-info" th:text="#{dashboard.supervisor.sinProyectos}">

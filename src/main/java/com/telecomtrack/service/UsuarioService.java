@@ -63,6 +63,14 @@ public class UsuarioService {
         return usuarioRepository.findById(idUsuario);
     }
 
+    @Transactional(readOnly = true)
+    public Usuario getUsuarioPorCorreoActivo(String correo) {
+        return usuarioRepository.findByCorreoAndActivoTrue(correo)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("El usuario autenticado no existe")
+                );
+    }
+
     @Transactional
     public void save(Usuario usuario) {
 

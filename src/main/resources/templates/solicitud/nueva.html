@@ -42,13 +42,8 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" th:text="#{asignacion.tecnico}">Tecnico</label>
-                        <select name="tecnicoId" class="form-select" required>
-                            <option value="" th:text="#{rol.seleccionar}">-- Seleccione --</option>
-                            <option th:each="t : ${tecnicos}"
-                                    th:value="${t.idUsuario}"
-                                    th:text="${t.nombre + ' ' + t.apellido}">
-                            </option>
-                        </select>
+                        <input type="text" class="form-control"
+                               th:value="${tecnico.nombre + ' ' + tecnico.apellido}" readonly />
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" th:text="#{asignacion.proyecto}">Proyecto</label>
