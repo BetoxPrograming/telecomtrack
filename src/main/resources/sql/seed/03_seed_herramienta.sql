@@ -8,7 +8,8 @@ INSERT INTO herramienta (
     estado,
     fecha_retorno_estimada,
     fecha_baja_definitiva,
-    justificacion_baja_definitiva
+    justificacion_baja_definitiva,
+    id_ubicacion
 ) VALUES
     (
         'H-001',
@@ -18,7 +19,8 @@ INSERT INTO herramienta (
         'Disponible',
         NULL,
         NULL,
-        NULL
+        NULL,
+        (SELECT id_ubicacion FROM ubicacion WHERE nombre = 'Bodega Central' LIMIT 1)
     ),
     (
         'H-002',
@@ -28,7 +30,8 @@ INSERT INTO herramienta (
         'Mantenimiento',
         '2026-07-20',
         NULL,
-        NULL
+        NULL,
+        (SELECT id_ubicacion FROM ubicacion WHERE nombre = 'Bodega Central' LIMIT 1)
     ),
     (
         'H-003',
@@ -38,5 +41,6 @@ INSERT INTO herramienta (
         'Baja',
         NULL,
         '2026-07-01',
-        'Presentó daño estructural y salió de servicio.'
+        'Presentó daño estructural y salió de servicio.',
+        (SELECT id_ubicacion FROM ubicacion WHERE nombre = 'Bodega Central' LIMIT 1)
     );
