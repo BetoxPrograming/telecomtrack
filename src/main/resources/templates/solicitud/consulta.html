@@ -66,7 +66,7 @@
                 <tbody>
                 <tr th:each="d : ${solicitud.detalles}">
                     <td th:text="${d.herramienta != null ? d.herramienta.nombre : d.material.nombre}"></td>
-                    <td th:text="${d.herramienta != null ? #{herramienta.titulo.listado} : #{mat.titulo}}"></td>
+                    <td th:text="${d.herramienta != null} ? #{herramienta.titulo.listado} : #{mat.titulo}"></td>
                     <td th:text="${d.herramienta != null ? '-' : d.cantidad}"></td>
                 </tr>
                 </tbody>

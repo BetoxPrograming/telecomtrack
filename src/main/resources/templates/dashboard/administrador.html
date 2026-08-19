@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{general/fragmentos :: head}"></head>
 <body class="bg-light">
 <header th:replace="~{general/fragmentos :: header}"></header>
@@ -10,7 +11,8 @@
             <i class="fa-solid fa-gauge-high text-primary me-2"></i>
             <span th:text="#{dashboard.titulo}">Dashboard</span>
         </h2>
-        <a th:href="@{/reportes}" class="btn btn-outline-primary">
+        <a sec:authorize="hasRole('Supervisor')"
+           th:href="@{/reportes}" class="btn btn-outline-primary">
             <i class="fa-solid fa-file-lines me-1"></i>
             <span th:text="#{reporte.menu.titulo}">Reportes</span>
         </a>

@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS telecomtrack
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
 USE telecomtrack;
 
 CREATE TABLE IF NOT EXISTS usuario (
